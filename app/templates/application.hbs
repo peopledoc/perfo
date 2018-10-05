@@ -1,5 +1,21 @@
-{{!-- The following component displays Ember's default welcome message. --}}
-{{welcome-page}}
-{{!-- Feel free to remove this! --}}
+<h1>Perfo</h1>
 
-{{outlet}}
+{{#if isCircleCIReady}}
+  {{#if userName}}
+    Authenticated as {{userName}}
+    <button {{action "unsetToken" on="click"}}>Deauth</button>
+
+    {{outlet}}
+  {{else}}
+    <h2>Auth</h2>
+
+    Please give us a CircleCI API token to access your account.  If you don't have a token yet, <a href="https://circleci.com/account/api" target="_blank">click here</a> to create one.
+
+    <form {{action "setToken" on="submit"}}>
+      {{input type="text" placeholder="CircleCI auth token" value=authToken}}
+      <button type="submit">Authenticate</button>
+    </form>
+  {{/if}}
+{{else}}
+  Checking CircleCI authentication...
+{{/if}}

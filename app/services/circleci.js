@@ -3,7 +3,6 @@ import AjaxService from 'ember-ajax/services/ajax'
 import DS from 'ember-data'
 
 const { PromiseObject } = DS
-
 const LS_KEY = 'circleci-auth-token'
 
 export default AjaxService.extend({

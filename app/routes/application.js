@@ -4,6 +4,10 @@ import { inject as service } from '@ember/service'
 export default Route.extend({
   circleci: service(),
 
+  model() {
+    return this.store.findAll('circleci-project')
+  },
+
   actions: {
     setToken() {
       this.circleci.set('token', this.controller.authToken)
@@ -11,13 +15,12 @@ export default Route.extend({
       this.circleci.userData.then((data) => {
         if (data) {
           this.controller.set('authToken', '')
-          this.transitionTo('projects')
         }
       })
     },
+
     unsetToken() {
       this.circleci.set('token', null)
-      this.transitionTo('index')
     }
   }
 })

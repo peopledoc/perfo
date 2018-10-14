@@ -2,14 +2,32 @@
 
 {{#if isCircleCIReady}}
   {{#if userName}}
-    Authenticated as {{userName}}
-    <button {{action "unsetToken" on="click"}}>Deauth</button>
+    <nav>
+      <section class="nav-auth">
+        Authenticated as {{userName}}
+        <button {{action "unsetToken" on="click"}}>Deauth</button>
+      </section>
 
-    {{outlet}}
+      <section class="nav-auth">
+        {{#power-select
+          selected=selectedProject
+          options=projects
+          onchange=(action (mut selectedProject))
+          as |project|
+        }}
+          {{project.displayName}}
+        {{/power-select}}
+      </section>
+    </nav>
+
+    {{#if selectedProject}}
+      {{high-charts chartOptions=chartOptions content=chartData}}
+    {{/if}}
   {{else}}
     <h2>Auth</h2>
 
-    Please give us a CircleCI API token to access your account.  If you don't have a token yet, <a href="https://circleci.com/account/api" target="_blank">click here</a> to create one.
+    Please give us a CircleCI API token to access your account.
+    If you don't have a token yet, <a href="https://circleci.com/account/api" target="_blank">click here</a> to create one.
 
     <form {{action "setToken" on="submit"}}>
       {{input type="text" placeholder="CircleCI auth token" value=authToken}}

@@ -12,8 +12,11 @@ export default Controller.extend({
   userName: readOnly('circleci.userData.name'),
 
   // Projects, selected project and branch
+  isLoadingProjects: not('projects.isSettled'),
   projects: computed('isCircleCIReady', function() {
-    return this.isCircleCIReady ? this.store.findAll('circleci-project') : []
+    return this.isCircleCIReady
+      ? this.store.findAll('circleci-project')
+      : Promise.resolve([])
   }),
   selectedProject: null,
   selectedBranch: 'master',
@@ -21,15 +24,13 @@ export default Controller.extend({
   // Builds for selected project on selected branch
   isLoadingBuilds: not('projectBuilds.isSettled'),
   projectBuilds: computed('selectedProject', 'selectedBranch', function() {
-    if (!this.selectedProject) {
-      return Promise.resolve([])
-    }
-
-    return this.store.query('circleci-build', {
-      project: this.selectedProject.id,
-      branch: this.selectedBranch,
-      limit: 100
-    })
+    return this.selectedProject
+      ? this.store.query('circleci-build', {
+        project: this.selectedProject.id,
+        branch: this.selectedBranch,
+        limit: 100
+      })
+      : Promise.resolve([])
   }),
 
   // True when workflows are active for any build

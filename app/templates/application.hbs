@@ -8,7 +8,7 @@
         <button {{action "unsetToken" on="click"}}>Deauth</button>
       </section>
 
-      <section class="nav-auth">
+      <section class="nav-project">
         {{#power-select
           selected=selectedProject
           options=projects
@@ -21,18 +21,23 @@
     </nav>
 
     {{#if selectedProject}}
-      {{high-charts chartOptions=chartOptions content=chartData}}
+      <section class="chart-container">
+        {{high-charts chartOptions=chartOptions content=chartData}}
+      </section>
     {{/if}}
   {{else}}
-    <h2>Auth</h2>
-
-    Please give us a CircleCI API token to access your account.
+    <nav class="auth">
+        <section class="nav-auth">
+      Please give us a CircleCI API token to access your account.
     If you don't have a token yet, <a href="https://circleci.com/account/api" target="_blank">click here</a> to create one.
-
+  </section>
+        <section class="nav-auth">
     <form {{action "setToken" on="submit"}}>
       {{input type="text" placeholder="CircleCI auth token" value=authToken}}
       <button type="submit">Authenticate</button>
     </form>
+  </section>
+  </nav>
   {{/if}}
 {{else}}
   Checking CircleCI authentication...

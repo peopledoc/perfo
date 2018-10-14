@@ -12,7 +12,9 @@ export default Controller.extend({
   userName: readOnly('circleci.userData.name'),
 
   // Projects, selected project and branch
-  projects: readOnly('model'),
+  projects: computed('isCircleCIReady', function() {
+    return this.isCircleCIReady ? this.store.findAll('circleci-project') : []
+  }),
   selectedProject: null,
   selectedBranch: 'master',
 

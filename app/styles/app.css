@@ -1,0 +1,60 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+body > .ember-view {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+h1 {
+  margin: 0;
+  padding: 1rem;
+  background-color: #333;
+  color: #ddd;
+}
+
+nav {
+  margin: 0 0 1rem 0;
+  padding: 0;
+  background-color: #555;
+  color: #ddd;
+
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+nav .ember-power-select-trigger {
+  color: initial;
+}
+
+nav a:link,
+nav a:visited,
+nav a:active {
+  color: #fd3;
+  text-decoration: none;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+.nav-auth,
+.nav-project {
+  padding: 1rem;
+}
+
+.nav-project {
+  flex-grow: 1;
+}
+
+.chart-container {
+  flex-grow: 1;
+}

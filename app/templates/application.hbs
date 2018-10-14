@@ -1,4 +1,4 @@
-<h1>Perfo</h1>
+<h1><img src="assets/perfo.svg"> Perfo</h1>
 
 {{#if isCircleCIReady}}
   {{#if userName}}
@@ -13,6 +13,7 @@
           selected=selectedProject
           options=projects
           onchange=(action (mut selectedProject))
+          placeholder="Select a project..."
           as |project|
         }}
           {{project.displayName}}
@@ -21,9 +22,13 @@
     </nav>
 
     {{#if selectedProject}}
-      <section class="chart-container">
-        {{high-charts chartOptions=chartOptions content=chartData}}
-      </section>
+      {{#if isLoadingBuilds}}
+        Loading build data for project...
+      {{else}}
+        <section class="chart-container">
+          {{high-charts chartOptions=chartOptions content=chartData}}
+        </section>
+      {{/if}}
     {{/if}}
   {{else}}
     <nav class="auth">

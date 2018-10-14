@@ -21,6 +21,12 @@ h1 {
   color: #ddd;
 }
 
+h1 img {
+  height: 2rem;
+  margin-right: 1rem;
+  vertical-align: middle;
+}
+
 nav {
   margin: 0 0 1rem 0;
   padding: 0;

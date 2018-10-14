@@ -1,6 +1,6 @@
 import Controller from '@ember/controller'
 import { computed } from '@ember/object'
-import { readOnly } from '@ember/object/computed'
+import { readOnly, not } from '@ember/object/computed'
 import { inject as service } from '@ember/service'
 import moment from 'moment'
 
@@ -19,14 +19,17 @@ export default Controller.extend({
   selectedBranch: 'master',
 
   // Builds for selected project on selected branch
+  isLoadingBuilds: not('projectBuilds.isSettled'),
   projectBuilds: computed('selectedProject', 'selectedBranch', function() {
-    return this.selectedProject
-      ? this.store.query('circleci-build', {
-        project: this.selectedProject.id,
-        branch: this.selectedBranch,
-        limit: 100
-      })
-      : []
+    if (!this.selectedProject) {
+      return Promise.resolve([])
+    }
+
+    return this.store.query('circleci-build', {
+      project: this.selectedProject.id,
+      branch: this.selectedBranch,
+      limit: 100
+    })
   }),
 
   // True when workflows are active for any build

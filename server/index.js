@@ -15,8 +15,11 @@ module.exports = function(app) {
 
   // CircleCI API proxy
   let request = require('request')
+  let cache = {}
+  let CACHE_VALIDITY = 30 * 60 * 1000
   let CIRCLECI_API = 'https://circleci.com/api/v1.1'
   let PROXY_PATH = '/circleci'
+
   app.use(PROXY_PATH, (req, res) => {
     let path = req.originalUrl.slice(PROXY_PATH.length)
     let auth = req.headers.authorization
@@ -32,6 +35,20 @@ module.exports = function(app) {
       proxyHeaders.Accept = req.headers.accept
     }
 
+    let now = new Date()
+    for (let key in cache) {
+      if (cache[key].validUntil <= now) {
+        delete cache[key]
+      }
+    }
+
+    let cacheKey = `${auth} ${req.method} ${proxyUrl}`
+    if (cacheKey in cache) {
+      let cached = cache[cacheKey]
+      res.status(cached.status).send(cached.body)
+      return
+    }
+
     request(
       {
         url: proxyUrl,
@@ -42,6 +59,12 @@ module.exports = function(app) {
         if (error) {
           res.status(500).send(error)
         } else {
+          cache[cacheKey] = {
+            body,
+            status: response.statusCode,
+            validUntil: now + CACHE_VALIDITY
+          }
+
           res.status(response.statusCode).send(body)
         }
       }

@@ -59,10 +59,22 @@ export default Controller.extend({
   // Graph options for highcharts
   chartOptions: computed('selectedProject', 'selectedBranch', function() {
     return {
+      chart: {
+        height: '600px',
+        type: 'spline',
+        zoomType: 'x'
+      },
+      plotOptions: {
+        spline: {
+          marker: {
+            enabled: true
+          }
+        }
+      },
       title: {
         text: `Build durations for ${this.selectedProject.displayName} (on ${
           this.selectedBranch
-        })`
+        })<br><i style="font-size: .8em;">(click and drag to zoom)</i>`
       },
       tooltip: {
         pointFormat:
@@ -90,7 +102,6 @@ export default Controller.extend({
         : this.validBuilds
 
       return {
-        type: 'line',
         name: j,
         dataLabels: {
           formatter: (value) => moment.utc(value).format('mm:ss')

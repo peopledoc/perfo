@@ -16,7 +16,7 @@ export default Component.extend({
     function() {
       return {
         chart: {
-          height: '400px',
+          height: '600px',
           type: this.graphType,
           zoomType: 'x'
         },

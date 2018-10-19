@@ -1,15 +1,19 @@
 {{#if project}}
-  <h4>{{project.displayName}} on {{branch}}</h4>
-
   {{#if isLoadingBuilds}}
     Loading build data...
   {{else}}
-    <section class="chart-container">
+    <section class='chart-container'>
       {{ci-perf-graph projectBuilds=validBuilds projectHasWorkflows=projectHasWorkflows title=mainGraphTitle}}
     </section>
 
     {{#each customGraphs as |graph|}}
-      {{custom-graph project=project projectBuilds=validBuilds title=graph.title jobName=graph.jobName artifactMatches=graph.artifactMatches}}
+      {{custom-graph project=project projectBuilds=validBuilds graph=graph}}
+      <button {{action 'deleteCustomGraph' graph}}>Remove</button>
     {{/each}}
+
+    <button {{action 'toggleAddCustomGraph' on='click'}}>{{#if isAddingCustomGraph}}Cancel{{else}}Add custom graph{{/if}}</button>
+    {{#if isAddingCustomGraph}}
+      {{custom-graph-form title='New custom graph' submitLabel='Add' model=newCustomGraph submitAction=(action 'addCustomGraph')}}
+    {{/if}}
   {{/if}}
 {{/if}}

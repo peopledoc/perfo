@@ -11,10 +11,14 @@ export default LineGraph.extend({
   circleci: service(),
 
   project: null,
-  jobName: null,
-  artifactMatches: null,
+  graph: null,
+
+  title: readOnly('graph.title'),
+  jobName: readOnly('graph.jobName'),
+  artifactMatches: readOnly('graph.artifactMatches'),
+
   artifactRegex: computed('artifactMatches', function() {
-    return new RegExp(`/${this.artifactMatches}/`)
+    return new RegExp(this.artifactMatches)
   }),
   projectBuilds: computed(() => []),
 

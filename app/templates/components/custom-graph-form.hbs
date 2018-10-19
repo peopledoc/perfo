@@ -1,0 +1,24 @@
+<h4>{{title}}</h4>
+<form {{action 'submit' on='submit'}}>
+  <section class="form-field">
+    <label for='title'>Graph title</label>
+    {{input id='title' type='text' value=model.title}}
+  </section>
+
+  <section class="form-field">
+    <label for='jobName'>CI job name</label>
+    {{input id='jobName' type='text' value=model.jobName}}
+  </section>
+
+  <section class="form-field">
+    <label for='artifactMatches'>Job artifact (regex)</label>
+    {{input id='artifactMatches' type='text' value=model.artifactMatches}}
+  </section>
+
+  <section class="form-field">
+    <label for='branchMatches'>Only on branches matching (regex)</label>
+    {{input id='branchMatches' type='text' value=model.branchMatches}}
+  </section>
+
+  <button type='submit'>{{submitLabel}}</button>
+</form>

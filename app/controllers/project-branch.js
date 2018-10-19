@@ -1,14 +1,24 @@
 import Controller from '@ember/controller'
 import { computed } from '@ember/object'
-import { alias, readOnly, not } from '@ember/object/computed'
+import { readOnly, not, notEmpty, sort } from '@ember/object/computed'
 import { inject as service } from '@ember/service'
 
 export default Controller.extend({
   navigation: service(),
+  store: service(),
 
   project: readOnly('navigation.selectedProject'),
   branch: readOnly('navigation.selectedBranch'),
-  customGraphs: alias('model'),
+
+  isAddingCustomGraph: notEmpty('newCustomGraph'),
+  newCustomGraph: null,
+  customGraphs: computed('project', function() {
+    return this.store.query('custom-graph', {
+      project: this.project.id
+    })
+  }),
+  customGraphSorting: Object.freeze(['order']),
+  sortedCustomGraphs: sort('customGraphs', 'customGraphSorting'),
 
   mainGraphTitle: computed('project.displayName', 'branch', function() {
     return `Build durations for ${this.project.displayName} (on ${this.branch})`
@@ -50,6 +60,36 @@ export default Controller.extend({
   ),
 
   actions: {
-    addCustomGraph() {}
+    toggleAddCustomGraph() {
+      if (this.newCustomGraph) {
+        this.set('newCustomGraph', null)
+      } else {
+        this.set(
+          'newCustomGraph',
+          this.store.createRecord('custom-graph', { project: this.project.id })
+        )
+      }
+    },
+
+    addCustomGraph() {
+      this.store
+        .query('custom-graph', { project: this.project.id })
+        .then((graphs) => {
+          this.newCustomGraph.set(
+            'order',
+            Math.max(0, Math.max(...graphs.map((g) => g.order + 1)))
+          )
+          this.newCustomGraph
+            .save()
+            .then(() => this.notifyPropertyChange('customGraphs'))
+          this.set('newCustomGraph', null)
+        })
+    },
+
+    deleteCustomGraph(graph) {
+      graph
+        .destroyRecord()
+        .then(() => this.notifyPropertyChange('customGraphs'))
+    }
   }
 })

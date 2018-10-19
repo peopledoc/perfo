@@ -7,11 +7,5 @@ export default Route.extend({
   model(params) {
     this.navigation.set('selectedProjectId', params.project)
     this.navigation.set('selectedBranch', params.branch)
-
-    return this.store
-      .query('custom-graph', {
-        project: params.project
-      })
-      .sortBy('order')
   }
 })

@@ -10,6 +10,7 @@ export default Model.extend({
   username: attr(),
   reponame: attr(),
 
+  branches: attr(),
   builds: hasMany('circleci-build', { async: true }),
 
   displayName: computed('username', 'reponame', function() {

@@ -28,7 +28,19 @@ module.exports = function(app) {
       return res.status(403).send('Authorization required')
     }
 
-    let proxyUrl = `${CIRCLECI_API}${path}`
+    let targetUrl = `${CIRCLECI_API}${path}`
+    if (path.startsWith('/download')) {
+      if (!req.query.url) {
+        return res.status(400).send('Missing ̀`url` query parameter')
+      }
+
+      let [token] = Buffer.from(auth.replace(/^Basic /, ''), 'base64')
+        .toString()
+        .split(':')
+      delete req.headers.authorization
+      targetUrl = `${req.query.url}?circle-token=${token}`
+    }
+
     let proxyHeaders = { Authorization: auth }
 
     if (req.headers.accept) {
@@ -42,27 +54,31 @@ module.exports = function(app) {
       }
     }
 
-    let cacheKey = `${auth} ${req.method} ${proxyUrl}`
+    let cacheKey = `${auth} ${req.method} ${targetUrl}`
     if (cacheKey in cache) {
       let cached = cache[cacheKey]
       res.status(cached.status).send(cached.body)
       return
     }
 
+    let jar = request.jar()
     request(
       {
-        url: proxyUrl,
+        url: targetUrl,
         method: req.method,
-        headers: proxyHeaders
+        headers: proxyHeaders,
+        jar
       },
       (error, response, body) => {
         if (error) {
           res.status(500).send(error)
         } else {
-          cache[cacheKey] = {
-            body,
-            status: response.statusCode,
-            validUntil: now + CACHE_VALIDITY
+          if (response.statusCode < 300) {
+            cache[cacheKey] = {
+              body,
+              status: response.statusCode,
+              validUntil: now + CACHE_VALIDITY
+            }
           }
 
           res.status(response.statusCode).send(body)

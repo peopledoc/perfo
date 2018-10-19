@@ -11,6 +11,7 @@ export default Model.extend({
   subject: attr(),
   lifecycle: attr(),
   outcome: attr(),
-  workflows: attr()
+  workflows: attr(),
+  has_artifacts: attr()
   /* eslint-enable camelcase */
 })

@@ -1,4 +1,5 @@
 import { computed } from '@ember/object'
+import { readOnly } from '@ember/object/computed'
 import AjaxService from 'ember-ajax/services/ajax'
 import DS from 'ember-data'
 
@@ -6,7 +7,6 @@ const { PromiseObject } = DS
 const LS_KEY = 'circleci-auth-token'
 
 export default AjaxService.extend({
-  // Ajax service options
   namespace: '/circleci',
   contentType: 'application/json; charset=UTF-8',
   headers: computed('token', function() {
@@ -18,7 +18,6 @@ export default AjaxService.extend({
     return headers
   }),
 
-  // CircleCI token and user data
   token: computed({
     get() {
       return localStorage.getItem(LS_KEY)
@@ -34,5 +33,7 @@ export default AjaxService.extend({
         .then((data) => data)
         .catch(() => null)
     })
-  })
+  }),
+  userName: readOnly('userData.name'),
+  isReady: readOnly('userData.isSettled')
 })

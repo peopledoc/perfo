@@ -4,8 +4,12 @@ export default Component.extend({
   model: null,
 
   title: null,
-  submitLabel: 'Submit',
+  submitLabel: null,
   submitAction: null,
+
+  didRender() {
+    this.element.scrollIntoView(false)
+  },
 
   actions: {
     submit() {

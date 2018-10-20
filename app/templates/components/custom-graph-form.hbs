@@ -1,24 +1,12 @@
-<h4>{{title}}</h4>
-<form {{action 'submit' on='submit'}}>
-  <section class="form-field">
-    <label for='title'>Graph title</label>
-    {{input id='title' type='text' value=model.title}}
-  </section>
+{{#if title}}
+  <h4>{{title}}</h4>
+{{/if}}
 
-  <section class="form-field">
-    <label for='jobName'>CI job name</label>
-    {{input id='jobName' type='text' value=model.jobName}}
-  </section>
-
-  <section class="form-field">
-    <label for='artifactMatches'>Job artifact (regex)</label>
-    {{input id='artifactMatches' type='text' value=model.artifactMatches}}
-  </section>
-
-  <section class="form-field">
-    <label for='branchMatches'>Only on branches matching (regex)</label>
-    {{input id='branchMatches' type='text' value=model.branchMatches}}
-  </section>
-
-  <button type='submit'>{{submitLabel}}</button>
-</form>
+{{#bs-form formLayout='horizontal' model=model onSubmit=(action 'submit') as |form|}}
+  {{form.element controlType="text" label="Graph title" property="title" required=true}}
+  {{form.element controlType="text" label="CI job name" property="jobName" required=true}}
+  {{form.element controlType="text" label="Artifact path" property="artifactMatches" required=true helpText="Regular expression that matches an artifact with data for the graph.  It must be a JSON array of objects with keys `label` and `value`."}}
+  {{form.element controlType="text" label="Branches" property="branchMatches" helpText="Regular expression that matches branches where this graph is relevant.  Leave empty to match all branches."}}
+  {{bs-button defaultText=submitLabel type="primary" buttonType="submit"}}
+  {{yield}}
+{{/bs-form}}

@@ -2,18 +2,46 @@
   {{#if isLoadingBuilds}}
     Loading build data...
   {{else}}
-    <section class='chart-container'>
-      {{ci-perf-graph projectBuilds=validBuilds projectHasWorkflows=projectHasWorkflows title=mainGraphTitle}}
-    </section>
+    {{#bs-accordion as |acc|}}
+      {{#acc.item value="-1" as |item|}}
+        {{#item.title}}
+          Build durations for {{project.displayName}}
+        {{/item.title}}
 
-    {{#each customGraphs as |graph|}}
-      {{custom-graph project=project projectBuilds=validBuilds graph=graph}}
-      <button {{action 'deleteCustomGraph' graph}}>Remove</button>
-    {{/each}}
+        {{#item.body}}
+          {{ci-perf-graph projectBuilds=validBuilds projectHasWorkflows=projectHasWorkflows title=mainGraphTitle}}
+        {{/item.body}}
+      {{/acc.item}}
 
-    <button {{action 'toggleAddCustomGraph' on='click'}}>{{#if isAddingCustomGraph}}Cancel{{else}}Add custom graph{{/if}}</button>
+      {{#each customGraphs as |graph|}}
+        {{#acc.item value=graph.order as |item|}}
+          {{#item.title}}
+            {{graph.title}}
+          {{/item.title}}
+
+          {{#item.body}}
+            {{custom-graph project=project projectBuilds=validBuilds graph=graph}}
+
+            {{#if graph.isEditing}}
+              {{#custom-graph-form model=graph submitLabel='Save' submitAction=(action 'saveCustomGraph' graph)}}
+                {{#bs-button type="secondary" onClick=(action "toggleEditCustomGraph" graph)}}Cancel{{/bs-button}}
+                {{#bs-button type="danger" onClick=(action "deleteCustomGraph" graph)}}Remove{{/bs-button}}
+              {{/custom-graph-form}}
+            {{else}}
+              {{#bs-button type="primary" onClick=(action "toggleEditCustomGraph" graph)}}Edit{{/bs-button}}
+              {{#bs-button type="danger" onClick=(action "deleteCustomGraph" graph)}}Remove{{/bs-button}}
+            {{/if}}
+          {{/item.body}}
+        {{/acc.item}}
+      {{/each}}
+    {{/bs-accordion}}
+
     {{#if isAddingCustomGraph}}
-      {{custom-graph-form title='New custom graph' submitLabel='Add' model=newCustomGraph submitAction=(action 'addCustomGraph')}}
+      {{#custom-graph-form title='New custom graph' submitLabel='Add' model=newCustomGraph submitAction=(action 'addCustomGraph')}}
+        {{#bs-button type="secondary" onClick=(action 'toggleAddCustomGraph')}}Cancel{{/bs-button}}
+      {{/custom-graph-form}}
+    {{else}}
+      {{#bs-button type="primary" onClick=(action 'toggleAddCustomGraph')}}Add custom graph{{/bs-button}}
     {{/if}}
   {{/if}}
 {{/if}}

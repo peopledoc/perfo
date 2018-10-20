@@ -3,6 +3,10 @@ body {
   margin: 0;
 }
 
+body {
+  font-size: 0.9em;
+}
+
 h1 {
   margin: 0;
   padding: 1rem;
@@ -50,4 +54,8 @@ nav a:hover {
 .nav-project,
 .nav-branch {
   flex-grow: 1;
+}
+
+.main {
+  margin: 1rem;
 }

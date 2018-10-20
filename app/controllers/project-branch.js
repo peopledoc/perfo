@@ -20,10 +20,6 @@ export default Controller.extend({
   customGraphSorting: Object.freeze(['order']),
   sortedCustomGraphs: sort('customGraphs', 'customGraphSorting'),
 
-  mainGraphTitle: computed('project.displayName', 'branch', function() {
-    return `Build durations for ${this.project.displayName} (on ${this.branch})`
-  }),
-
   // Builds for selected project on selected branch
   isLoadingBuilds: not('projectBuilds.isSettled'),
   projectBuilds: computed('project', 'branch', function() {
@@ -79,10 +75,10 @@ export default Controller.extend({
             'order',
             Math.max(0, Math.max(...graphs.map((g) => g.order + 1)))
           )
-          this.newCustomGraph
-            .save()
-            .then(() => this.notifyPropertyChange('customGraphs'))
-          this.set('newCustomGraph', null)
+          this.newCustomGraph.save().then(() => {
+            this.set('newCustomGraph', null)
+            this.notifyPropertyChange('customGraphs')
+          })
         })
     },
 
@@ -90,6 +86,17 @@ export default Controller.extend({
       graph
         .destroyRecord()
         .then(() => this.notifyPropertyChange('customGraphs'))
+    },
+
+    toggleEditCustomGraph(graph) {
+      graph.set('isEditing', !graph.isEditing)
+    },
+
+    saveCustomGraph(graph) {
+      graph.save().then(() => {
+        graph.set('isEditing', false)
+        this.notifyPropertyChange('customGraphs')
+      })
     }
   }
 })

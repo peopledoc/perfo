@@ -62,7 +62,11 @@ export default Controller.extend({
       } else {
         this.set(
           'newCustomGraph',
-          this.store.createRecord('custom-graph', { project: this.project.id })
+          this.store.createRecord('custom-graph', {
+            project: this.project.id,
+            showLegend: true,
+            formatter: 'none'
+          })
         )
       }
     },
@@ -70,9 +74,7 @@ export default Controller.extend({
     addCustomGraph() {
       this.store
         .query('custom-graph', {
-          project: this.project.id,
-          showLegend: true,
-          formatter: 'none'
+          project: this.project.id
         })
         .then((graphs) => {
           this.newCustomGraph.set(

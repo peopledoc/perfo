@@ -15,6 +15,8 @@ export default Component.extend({
     'valueTitle',
     'valueFormatter',
     function() {
+      let { valueFormatter } = this
+
       return {
         chart: {
           height: '600px',
@@ -33,6 +35,17 @@ export default Component.extend({
         },
         title: {
           text: ''
+        },
+        tooltip: {
+          pointFormatter() {
+            let {
+              color,
+              y,
+              series: { name }
+            } = this
+            let value = valueFormatter(y)
+            return `<span style="color:${color}">●</span> ${name}: <b>${value}</b><br/>.`
+          }
         },
         xAxis: { type: 'datetime', title: { text: 'Date' } },
         yAxis: {

@@ -9,7 +9,7 @@ export function sizeFormatter(bytes) {
     size /= 1024
   }
 
-  return `${Math.floor(size)} ${sizePrefixes[prefixIndex]}b`
+  return `${Math.floor(size)} ${sizePrefixes[prefixIndex]}B`
 }
 
 export function secondsFormatter(seconds) {

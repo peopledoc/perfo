@@ -2,8 +2,8 @@
   {{#if isLoadingBuilds}}
     Loading build data...
   {{else}}
-    {{#bs-accordion as |acc|}}
-      {{#acc.item value="-1" as |item|}}
+    {{#bs-accordion selected='main' as |acc|}}
+      {{#acc.item value='main' as |item|}}
         {{#item.title}}
           Build durations for {{project.displayName}}
         {{/item.title}}
@@ -14,7 +14,7 @@
       {{/acc.item}}
 
       {{#each customGraphs as |graph|}}
-        {{#acc.item value=graph.order as |item|}}
+        {{#acc.item value=(concat 'graph-' graph.order) as |item|}}
           {{#item.title}}
             {{graph.title}}
           {{/item.title}}

@@ -4,13 +4,15 @@ import { computed } from '@ember/object'
 export default Component.extend({
   title: null,
   graphType: 'spline',
+  showLegend: true,
 
   valueTitle: 'Value',
   valueFormatter: (value) => value.toString(),
 
   chartOptions: computed(
-    'title',
     'graphType',
+    'showLegend',
+    'title',
     'valueTitle',
     'valueFormatter',
     function() {
@@ -19,6 +21,9 @@ export default Component.extend({
           height: '600px',
           type: this.graphType,
           zoomType: 'x'
+        },
+        legend: {
+          enabled: this.showLegend
         },
         plotOptions: {
           spline: {

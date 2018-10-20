@@ -7,5 +7,6 @@ export default Model.extend({
   jobName: attr(),
   artifactMatches: attr(),
   branchMatches: attr(),
-  order: attr()
+  order: attr(),
+  showLegend: attr('boolean')
 })

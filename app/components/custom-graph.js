@@ -16,6 +16,7 @@ export default LineGraph.extend({
   title: readOnly('graph.title'),
   jobName: readOnly('graph.jobName'),
   artifactMatches: readOnly('graph.artifactMatches'),
+  showLegend: readOnly('graph.showLegend'),
 
   artifactRegex: computed('artifactMatches', function() {
     return new RegExp(this.artifactMatches)

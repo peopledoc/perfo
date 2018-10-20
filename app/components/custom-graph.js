@@ -3,6 +3,11 @@ import { readOnly } from '@ember/object/computed'
 import { inject as service } from '@ember/service'
 import DS from 'ember-data'
 import LineGraph from 'perfo/components/line-graph'
+import {
+  sizeFormatter,
+  secondsFormatter,
+  millisecondsFormatter
+} from 'perfo/utils/formatters'
 
 const { PromiseArray } = DS
 
@@ -13,10 +18,33 @@ export default LineGraph.extend({
   project: null,
   graph: null,
 
-  title: readOnly('graph.title'),
   jobName: readOnly('graph.jobName'),
   artifactMatches: readOnly('graph.artifactMatches'),
   showLegend: readOnly('graph.showLegend'),
+
+  valueTitle: computed('graph.formatter', function() {
+    if (
+      this.graph.formatter === 'duration_sec'
+      || this.graph.formatter === 'duration_ms'
+    ) {
+      return 'Duration'
+    } else if (this.graph.formatter === 'size') {
+      return 'Size'
+    } else {
+      return 'Value'
+    }
+  }),
+  valueFormatter: computed('graph.formatter', function() {
+    if (this.graph.formatter === 'duration_sec') {
+      return secondsFormatter
+    } else if (this.graph.formatter === 'duration_ms') {
+      return millisecondsFormatter
+    } else if (this.graph.formatter === 'size') {
+      return sizeFormatter
+    } else {
+      return (x) => x
+    }
+  }),
 
   artifactRegex: computed('artifactMatches', function() {
     return new RegExp(this.artifactMatches)

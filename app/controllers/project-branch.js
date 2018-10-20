@@ -69,7 +69,11 @@ export default Controller.extend({
 
     addCustomGraph() {
       this.store
-        .query('custom-graph', { project: this.project.id, showLegend: true })
+        .query('custom-graph', {
+          project: this.project.id,
+          showLegend: true,
+          formatter: 'none'
+        })
         .then((graphs) => {
           this.newCustomGraph.set(
             'order',

@@ -8,5 +8,6 @@ export default Model.extend({
   artifactMatches: attr(),
   branchMatches: attr(),
   order: attr(),
-  showLegend: attr('boolean')
+  showLegend: attr('boolean'),
+  formatter: attr()
 })

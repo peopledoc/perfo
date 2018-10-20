@@ -1,13 +1,13 @@
 import { computed } from '@ember/object'
-import moment from 'moment'
 import LineGraph from 'perfo/components/line-graph'
+import { millisecondsFormatter } from 'perfo/utils/formatters'
 
 export default LineGraph.extend({
   projectHasWorkflows: null,
   projectBuilds: computed(() => []),
 
   valueTitle: 'Duration',
-  valueFormatter: (value) => moment.utc(value).format('mm:ss'),
+  valueFormatter: millisecondsFormatter,
 
   // Graph data for highcharts
   chartData: computed('projectHasWorkflows', 'projectBuilds.@each', function() {

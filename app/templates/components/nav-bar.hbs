@@ -2,8 +2,8 @@
   {{#if circleUserName}}
     <nav>
       <section class="nav-auth">
-        Authenticated as {{circleUserName}}
-        <button {{action "unsetToken" on="click"}}>Deauth</button>
+        {{circleUserName}}
+        {{#bs-button type="secondary" onClick=(action 'unsetToken')}}Deauth{{/bs-button}}
       </section>
 
       <section class="nav-project">
@@ -42,14 +42,15 @@
   {{else}}
     <nav class="auth">
       <section class="nav-auth">
-        Please give us a CircleCI API token to access your account.
-        If you don't have a token yet, <a href="https://circleci.com/account/api" target="_blank">click here</a> to create one.
-      </section>
-      <section class="nav-auth">
-        <form {{action "setToken" on="submit"}}>
-          {{input type="text" placeholder="CircleCI auth token" value=authToken}}
-          <button type="submit">Authenticate</button>
-        </form>
+        {{#bs-form model=this formLayout='inline' onSubmit=(action 'setToken') as |form|}}
+          {{form.element controlType="password" hiddenLabel="CircleCI auth token" placeholder="CircleCI auth token" required="true" property="authToken"}}
+          {{bs-button defaultText="Authenticate" type="primary" buttonType="submit"}}
+          <div class="form-group">
+            <label>
+              <a href="https://circleci.com/account/api" target="_blank">or click here to create an API token</a>.
+            </label>
+          </div>
+        {{/bs-form}}
       </section>
     </nav>
   {{/if}}

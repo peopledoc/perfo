@@ -10,6 +10,8 @@ export default Controller.extend({
   project: readOnly('navigation.selectedProject'),
   branch: readOnly('navigation.selectedBranch'),
 
+  accordionSelectedItem: 'main',
+
   isAddingCustomGraph: notEmpty('newCustomGraph'),
   newCustomGraph: null,
   customGraphs: computed('project', function() {
@@ -19,6 +21,7 @@ export default Controller.extend({
   }),
   customGraphSorting: Object.freeze(['order']),
   sortedCustomGraphs: sort('customGraphs', 'customGraphSorting'),
+  maxCustomGraphOrder: readOnly('sortedCustomGraphs.lastObject.order'),
 
   // Builds for selected project on selected branch
   isLoadingBuilds: not('projectBuilds.isSettled'),
@@ -72,37 +75,24 @@ export default Controller.extend({
     },
 
     addCustomGraph() {
-      this.store
-        .query('custom-graph', {
-          project: this.project.id
-        })
-        .then((graphs) => {
-          this.newCustomGraph.set(
-            'order',
-            Math.max(0, Math.max(...graphs.map((g) => g.order + 1)))
-          )
-          this.newCustomGraph.save().then(() => {
-            this.set('newCustomGraph', null)
-            this.notifyPropertyChange('customGraphs')
-          })
-        })
-    },
-
-    deleteCustomGraph(graph) {
-      graph
-        .destroyRecord()
-        .then(() => this.notifyPropertyChange('customGraphs'))
-    },
-
-    toggleEditCustomGraph(graph) {
-      graph.set('isEditing', !graph.isEditing)
-    },
-
-    saveCustomGraph(graph) {
-      graph.save().then(() => {
-        graph.set('isEditing', false)
+      let newOrder
+        = this.maxCustomGraphOrder >= 0 ? this.maxCustomGraphOrder + 1 : 0
+      this.newCustomGraph.set('order', newOrder)
+      this.newCustomGraph.save().then(() => {
+        this.set('newCustomGraph', null)
         this.notifyPropertyChange('customGraphs')
+        this.set('accordionSelectedItem', `graph-${newOrder}`)
       })
+    },
+
+    graphChanged(action, graph) {
+      if (action === 'moved') {
+        this.set('accordionSelectedItem', `graph-${graph.order}`)
+      } else if (action === 'deleted') {
+        this.set('accordionSelectedItem', 'main')
+      }
+
+      this.notifyPropertyChange('customGraphs')
     }
   }
 })

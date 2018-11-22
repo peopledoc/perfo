@@ -7,20 +7,8 @@ module('Integration | Component | custom-graph', function(hooks) {
   setupRenderingTest(hooks)
 
   test('it renders', async function(assert) {
-    // Set any properties with this.set('myProperty', 'value');
-    // Handle any actions with this.set('myAction', function(val) { ... });
-
-    await render(hbs`{{custom-graph}}`)
-
-    assert.equal(this.element.textContent.trim(), '')
-
-    // Template block usage:
-    await render(hbs`
-      {{#custom-graph}}
-        template block text
-      {{/custom-graph}}
-    `)
-
-    assert.equal(this.element.textContent.trim(), 'template block text')
+    this.set('graph', { formatter: null })
+    await render(hbs`{{custom-graph graph=graph}}`)
+    assert.ok(true, 'it renders')
   })
 })

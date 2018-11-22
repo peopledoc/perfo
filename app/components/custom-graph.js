@@ -11,6 +11,45 @@ import {
 
 const { PromiseArray } = DS
 
+async function fetchData({ circleci, store, project, builds, artifactRegex }) {
+  // Get a list of artifacts for each build
+  let artifactLists = await Promise.all(
+    builds.map((build) =>
+      store.query('circleci-artifact', {
+        project: project.id,
+        build: build.build_num
+      })
+    )
+  )
+
+  // Extract for each artifact list the first that matches the requested path
+  let matchingArtifacts = artifactLists.map((list) => {
+    return list.find((a) => artifactRegex.test(a.path))
+  })
+
+  // Fetch data for each matching artifact
+  let artifactData = await Promise.all(
+    matchingArtifacts.map(
+      (artifact) =>
+        artifact
+          ? circleci.request(
+            `/download?url=${encodeURIComponent(artifact.url)}`
+          )
+          : Promise.resolve(null)
+    )
+  )
+
+  return Promise.resolve(
+    artifactData
+      // Zip artifact data with corresponding build
+      .map((data, index) => {
+        return { data, build: builds[index] }
+      })
+      // Remove empty ones
+      .filter((item) => item.data)
+  )
+}
+
 export default LineGraph.extend({
   store: service(),
   circleci: service(),
@@ -73,61 +112,33 @@ export default LineGraph.extend({
     'artifactRegex',
     'builds.@each',
     function() {
-      let { builds } = this
-
-      return new PromiseArray({
-        promise: Promise.all(
-          builds.map((build) =>
-            this.store.query('circleci-artifact', {
-              project: this.project.id,
-              build: build.build_num
-            })
-          )
-        ).then((artifactLists) => {
-          // Extract for each artifact list the first that matches the requested path
-          let artifacts = artifactLists.map((list) => {
-            return list.find((a) => this.artifactRegex.test(a.path))
-          })
-
-          // Fetch artifact data
-          return (
-            Promise.all(
-              artifacts.map((artifact) => {
-                if (artifact) {
-                  return this.circleci.request(
-                    `/download?url=${encodeURIComponent(artifact.url)}`
-                  )
-                } else {
-                  return Promise.resolve(null)
-                }
-              })
-            )
-              // Zip artifact data together with the corresponding build and remove empty ones
-              .then((payloads) =>
-                payloads
-                  .map((data, index) => {
-                    return { data, build: builds[index] }
-                  })
-                  .filter((item) => item.data)
-              )
-          )
-        })
-      })
+      return new PromiseArray({ promise: fetchData(this) })
     }
   ),
 
   chartData: computed('dataArtifacts.@each', function() {
-    let series = this.dataArtifacts.reduce(function(series, set) {
-      return series.concat(set.data.map((point) => point.label))
-    }, [])
+    // Extract list of unique labels from all artifacts
+    let seriesNames = [
+      ...new Set(
+        this.dataArtifacts.reduce(function(seriesNames, set) {
+          return seriesNames.concat(set.data.map((point) => point.label))
+        }, [])
+      )
+    ]
 
-    return [...new Set(series)].map((name) => {
+    // Build one series for each unique label with all data points with that
+    // label from all artifacts
+    return seriesNames.map((name) => {
       return {
         name,
-        data: this.dataArtifacts.map((set) => [
-          set.build.start_date,
-          set.data.find((point) => point.label === name).value
-        ])
+        data: this.dataArtifacts
+          // filter out artifacts without a point with that label
+          .filter((set) => set.data.find((point) => point.label === name))
+          // Generate data points
+          .map((set) => [
+            set.build.start_time,
+            set.data.find((point) => point.label === name).value
+          ])
       }
     })
   })

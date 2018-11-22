@@ -1,13 +1,13 @@
-import { module, test } from 'qunit';
-import { setupTest } from 'ember-qunit';
+import { module, test } from 'qunit'
+import { setupTest } from 'ember-qunit'
 
 module('Unit | Model | custom graph', function(hooks) {
-  setupTest(hooks);
+  setupTest(hooks)
 
   // Replace this with your real tests.
   test('it exists', function(assert) {
-    let store = this.owner.lookup('service:store');
-    let model = store.createRecord('custom-graph', {});
-    assert.ok(model);
-  });
-});
+    let store = this.owner.lookup('service:store')
+    let model = store.createRecord('custom-graph', {})
+    assert.ok(model)
+  })
+})

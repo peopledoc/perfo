@@ -1,6 +1,7 @@
 /* eslint-env node */
 'use strict'
 
+const { createHash } = require('crypto')
 const { dirname, join } = require('path')
 const request = require('request')
 const createCache = require('./cache')
@@ -24,15 +25,16 @@ module.exports = function(app) {
       return res.status(403).send('Authorization required')
     }
 
+    let [token] = Buffer.from(auth.replace(/^Basic /, ''), 'base64')
+      .toString()
+      .split(':')
+
     let targetUrl = `${CIRCLECI_API}${path}`
     if (path.startsWith('/download')) {
       if (!req.query.url) {
         return res.status(400).send('Missing ̀`url` query parameter')
       }
 
-      let [token] = Buffer.from(auth.replace(/^Basic /, ''), 'base64')
-        .toString()
-        .split(':')
       delete req.headers.authorization
       targetUrl = `${req.query.url}?circle-token=${token}`
     }
@@ -43,7 +45,34 @@ module.exports = function(app) {
       proxyHeaders.Accept = req.headers.accept
     }
 
-    cache(`${auth} ${req.method} ${targetUrl}`, function() {
+    let cacheKey
+    if (path === '/me') {
+      cacheKey = `users/${token}/me`
+    } else if (path === '/projects') {
+      cacheKey = `users/${token}/projects`
+    } else if (path.startsWith('/project/')) {
+      if (path.endsWith('/artifacts')) {
+        // /project/github/myorg/myproject/build/artifacts
+        let [, , type, org, project, buildNum] = path.split('/')
+        cacheKey = `projects/${type}.${org}.${project}/build-${buildNum}/artifacts`
+      } else {
+        // /project/github/myorg/myproject/tree/mybranch?limit=100
+        let [, , type, org, project, , branchAndQuery] = path.split('/')
+        let [branch, query] = branchAndQuery.split('?')
+        cacheKey = `projects/${type}.${org}.${project}/branch-${branch}/${query}`
+      }
+    } else if (path.startsWith('/download')) {
+      // https://3529-99822495-gh.circle-artifacts.com/0/home/circleci/employee-app-front/build-stats/top20.json'
+      cacheKey = `downloads/${req.query.url
+        .replace('https://', '')
+        .replace(/\//g, '_')}`
+    } else {
+      let hash = createHash('sha256')
+      hash.update(`${auth} ${req.method} ${targetUrl}`)
+      cacheKey = `other/${hash.digest('hex')}`
+    }
+
+    cache(cacheKey, function() {
       return new Promise((resolve, reject) => {
         let jar = request.jar()
         request(
@@ -57,14 +86,14 @@ module.exports = function(app) {
             if (error) {
               reject(error)
             } else {
-              resolve({ body, status: response.statusCode })
+              resolve({ body: JSON.parse(body), status: response.statusCode })
             }
           }
         )
       })
     }).then(
       function(data) {
-        res.status(data.status).send(data.body)
+        res.status(data.status).send(JSON.stringify(data.body))
       },
       function(error) {
         res.status(500).send(error)

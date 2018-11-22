@@ -1,8 +1,8 @@
 /* eslint-env node */
 'use strict'
 
-const { createHash } = require('crypto')
 const {
+  mkdir: mkdirAsync,
   mkdirSync,
   readdirSync,
   readFile: readFileAsync,
@@ -11,9 +11,10 @@ const {
   unlinkSync,
   writeFile: writeFileAsync
 } = require('fs')
-const { join } = require('path')
+const { dirname, join } = require('path')
 
-const [readFile, unlink, writeFile] = [
+const [mkdir, readFile, unlink, writeFile] = [
+  mkdirAsync,
   readFileAsync,
   unlinkAsync,
   writeFileAsync
@@ -31,18 +32,39 @@ module.exports = function createCache(directory, validity) {
 
   // Prune expired cache
   let now = Date.now()
-  for (let key of readdirSync(directory)) {
-    let path = join(directory, key)
-    if (JSON.parse(readFileSync(path)).validUntil < now) {
-      unlinkSync(path)
+  function pruneDir(dir) {
+    let hasContent = false
+    for (let dirent of readdirSync(dir, { withFileTypes: true })) {
+      let path = join(dir, dirent.name)
+      if (dirent.isDirectory()) {
+        if (!pruneDir(path)) {
+          unlinkSync(path)
+        } else {
+          hasContent = true
+        }
+      } else {
+        if (JSON.parse(readFileSync(path)).validUntil < now) {
+          unlinkSync(path)
+        } else {
+          hasContent = true
+        }
+      }
     }
+    return hasContent
   }
+  pruneDir(directory, now)
 
-  return async function(rawKey, getter) {
+  return async function(key, getter) {
     let now = Date.now()
-    let hash = createHash('sha256')
-    hash.update(rawKey)
-    let path = join(directory, hash.digest('hex'))
+    let path = join(directory, key)
+
+    try {
+      await mkdir(dirname(path), { recursive: true })
+    } catch(e) {
+      if (e.code !== 'EEXIST') {
+        throw e
+      }
+    }
 
     try {
       let json = await readFile(path)
@@ -63,7 +85,6 @@ module.exports = function createCache(directory, validity) {
         await writeFile(
           path,
           JSON.stringify({
-            rawKey,
             validUntil: now + validity,
             payload
           })

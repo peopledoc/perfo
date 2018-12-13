@@ -9,7 +9,7 @@ const createCache = require('./cache')
 const CIRCLECI_API = 'https://circleci.com/api/v1.1'
 const PROXY_PATH = '/circleci'
 
-const { PERFO_CACHE_DIR, PERFO_CACHE_VALIDITY } = process.env
+const { PERFO_ROOT_URL, PERFO_CACHE_DIR, PERFO_CACHE_VALIDITY } = process.env
 
 module.exports = function(app) {
   let cache = createCache(
@@ -17,8 +17,10 @@ module.exports = function(app) {
     Number(PERFO_CACHE_VALIDITY) || 30 * 60 * 1000
   )
 
-  app.use(PROXY_PATH, (req, res) => {
-    let path = req.originalUrl.slice(PROXY_PATH.length)
+  let proxyPath = `${PERFO_ROOT_URL || ''}${PROXY_PATH}`
+
+  app.use(proxyPath, (req, res) => {
+    let path = req.originalUrl.slice(proxyPath.length)
     let auth = req.headers.authorization
 
     if (!auth) {

@@ -4,7 +4,7 @@ module.exports = function(environment) {
   let ENV = {
     modulePrefix: 'perfo',
     environment,
-    rootURL: '/',
+    rootURL: process.env.PERFO_ROOT_URL || '/',
     locationType: 'auto',
     EmberENV: {
       FEATURES: {

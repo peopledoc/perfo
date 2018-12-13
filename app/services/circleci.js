@@ -2,12 +2,14 @@ import { computed } from '@ember/object'
 import { readOnly } from '@ember/object/computed'
 import AjaxService from 'ember-ajax/services/ajax'
 import DS from 'ember-data'
+import env from 'perfo/config/environment'
 
+const { rootURL } = env
 const { PromiseObject } = DS
 const LS_KEY = 'circleci-auth-token'
 
 export default AjaxService.extend({
-  namespace: '/circleci',
+  namespace: `${rootURL}circleci`,
   contentType: 'application/json; charset=UTF-8',
   headers: computed('token', function() {
     let headers = {}

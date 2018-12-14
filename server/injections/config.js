@@ -22,7 +22,7 @@ module.exports = function() {
   let cacheValidity = Number(PERFO_CACHE_VALIDITY) || 30 * MINUTE
   let cachePruneInterval = Number(PERFO_CACHE_PRUNE_INTERVAL) || cacheValidity
   let logFormat = PERFO_LOG_FORMAT || 'dev'
-  let maxBuildAge = Number(PERFO_MAX_BUILD_AGE) || 6 * MONTH
+  let maxBuildAge = Number(PERFO_MAX_BUILD_AGE) || 3 * MONTH
 
   return {
     rootURL: PERFO_ROOT_URL,

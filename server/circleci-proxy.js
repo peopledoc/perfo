@@ -6,18 +6,25 @@ const { dirname, join } = require('path')
 const request = require('request')
 const createCache = require('./cache')
 
-const CIRCLECI_API = 'https://circleci.com/api/v1.1'
-const PROXY_PATH = '/circleci'
+const CIRCLE_API = 'https://circleci.com/api/v1.1'
+const PROXY_PATH = 'circleci'
 
 let {
   PERFO_ROOT_URL: ROOT_URL,
   PERFO_DATA_DIR: DATA_DIR,
   PERFO_CACHE_VALIDITY: CACHE_VALIDITY,
-  PERFO_CIRCLECI_TOKEN: CIRCLE_TOKEN
+  PERFO_CIRCLECI_TOKEN: CIRCLE_TOKEN,
+  PERFO_ORG_FILTER: ORG_FILTER
 } = process.env
 
 if (!DATA_DIR) {
   DATA_DIR = join(dirname(__dirname), 'data')
+}
+
+function filterOrg(data) {
+  return ORG_FILTER
+    ? data.filter((project) => project.username === ORG_FILTER)
+    : data
 }
 
 module.exports = function(app) {
@@ -26,12 +33,12 @@ module.exports = function(app) {
     Number(CACHE_VALIDITY) || 30 * 60 * 1000
   )
 
-  let proxyPath = `${ROOT_URL || ''}${PROXY_PATH}`
+  let proxyPath = `${ROOT_URL || '/'}${PROXY_PATH}`
 
   app.use(proxyPath, (req, res) => {
     let path = req.originalUrl.slice(proxyPath.length)
 
-    let targetUrl = `${CIRCLECI_API}${path}`
+    let targetUrl = `${CIRCLE_API}${path}`
     if (path.startsWith('/download')) {
       if (!req.query.url) {
         return res.status(400).send('Missing ̀`url` query parameter')
@@ -51,10 +58,13 @@ module.exports = function(app) {
     }
 
     let cacheKey
+    let postProcess = (data) => data
+
     if (path === '/me') {
       cacheKey = `users/${CIRCLE_TOKEN}/me`
     } else if (path === '/projects') {
       cacheKey = `users/${CIRCLE_TOKEN}/projects`
+      postProcess = filterOrg
     } else if (path.startsWith('/project/')) {
       if (path.endsWith('/artifacts')) {
         // /project/github/myorg/myproject/build/artifacts
@@ -98,7 +108,7 @@ module.exports = function(app) {
       })
     }).then(
       function(data) {
-        res.status(data.status).send(JSON.stringify(data.body))
+        res.status(data.status).send(JSON.stringify(postProcess(data.body)))
       },
       function(error) {
         res.status(500).send(error)

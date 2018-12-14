@@ -7,6 +7,7 @@ const {
   PERFO_ROOT_URL,
   PERFO_DATA_DIR,
   PERFO_CACHE_VALIDITY,
+  PERFO_CACHE_PRUNE_INTERVAL,
   PERFO_ORG_FILTER,
   PERFO_CIRCLECI_TOKEN,
   PERFO_LOG_FORMAT
@@ -14,8 +15,8 @@ const {
 
 module.exports = function() {
   let dataDir = PERFO_DATA_DIR || join(dirname(dirname(__dirname)), 'data')
-  let cacheDir = join(dataDir, 'cache')
   let cacheValidity = Number(PERFO_CACHE_VALIDITY) || 30 * 60 * 1000
+  let cachePruneInterval = Number(PERFO_CACHE_PRUNE_INTERVAL) || cacheValidity
   let logFormat = PERFO_LOG_FORMAT || 'dev'
 
   return {
@@ -24,7 +25,7 @@ module.exports = function() {
     circleToken: PERFO_CIRCLECI_TOKEN,
     logFormat,
     dataDir,
-    cacheDir,
-    cacheValidity
+    cacheValidity,
+    cachePruneInterval
   }
 }

@@ -1,100 +1,66 @@
 /* eslint-env node */
 'use strict'
 
-const {
-  mkdir: mkdirAsync,
-  mkdirSync,
-  readdirSync,
-  readFile: readFileAsync,
-  readFileSync,
-  rmdirSync,
-  unlink: unlinkAsync,
-  unlinkSync,
-  writeFile: writeFileAsync
-} = require('fs')
-const { dirname, join } = require('path')
-
-const [mkdir, readFile, unlink, writeFile] = [
-  mkdirAsync,
-  readFileAsync,
-  unlinkAsync,
-  writeFileAsync
-].map(require('util').promisify)
+const { join } = require('path')
 
 module.exports = function(injections) {
   let {
-    config: { cacheDir, cacheValidity }
+    config: { cacheValidity, cachePruneInterval },
+    logger,
+    store
   } = injections
 
-  // Create directory
-  try {
-    mkdirSync(cacheDir, { recursive: true })
-  } catch(e) {
-    if (e.code !== 'EEXIST') {
-      throw e
-    }
-  }
+  let nextPrune = 0
+  async function maybePruneCache() {
+    let now = Date.now()
 
-  // Prune expired cache
-  let now = Date.now()
-  function pruneDir(dir) {
-    let hasContent = false
-    for (let dirent of readdirSync(dir, { withFileTypes: true })) {
-      let path = join(dir, dirent.name)
-      if (dirent.isDirectory()) {
-        if (!pruneDir(path)) {
-          rmdirSync(path)
-        } else {
-          hasContent = true
-        }
-      } else {
-        if (JSON.parse(readFileSync(path)).validUntil < now) {
-          unlinkSync(path)
-        } else {
-          hasContent = true
-        }
+    if (nextPrune > now) {
+      return
+    }
+
+    let keys = await store.keys('cache')
+    for (let key of keys) {
+      let data = await store.getItem(key)
+      if (data && data.validUntil < now) {
+        await store.delItem(key)
       }
     }
-    return hasContent
+
+    nextPrune = now + cachePruneInterval
   }
-  pruneDir(cacheDir, now)
 
   return async function(key, getter) {
+    await maybePruneCache()
+
     let now = Date.now()
-    let path = join(cacheDir, key)
+    let storeKey = join('cache', key)
 
     try {
-      await mkdir(dirname(path), { recursive: true })
-    } catch(e) {
-      if (e.code !== 'EEXIST') {
-        throw e
+      let data = await store.getItem(storeKey)
+      if (!data) {
+        throw new Error('cache miss')
       }
-    }
 
-    try {
-      let json = await readFile(path)
-      let data = JSON.parse(json)
       if (data.validUntil < now) {
-        await unlink(path)
-        throw new Error('expired')
+        await store.delItem(storeKey)
+        throw new Error('cache miss')
       } else {
         return data.payload
       }
     } catch(e) {
-      if (e.code !== 'ENOENT' && e.message !== 'expired') {
+      if (e.message !== 'cache miss') {
+        logger.error('cache get', e)
         throw e
       }
 
       let payload = await getter()
       if (!payload.__nocache) {
-        await writeFile(
-          path,
-          JSON.stringify({
-            validUntil: now + cacheValidity,
-            payload
-          })
-        )
+        await store.setItem(storeKey, {
+          validUntil: now + cacheValidity,
+          payload
+        })
       }
+
       return payload
     }
   }

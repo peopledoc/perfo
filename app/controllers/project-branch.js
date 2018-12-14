@@ -29,8 +29,7 @@ export default Controller.extend({
     return this.project
       ? this.store.query('circleci-build', {
         project: this.project.id,
-        branch: this.branch,
-        limit: 100
+        branch: this.branch
       })
       : Promise.resolve([])
   }),

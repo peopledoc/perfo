@@ -36,7 +36,6 @@ module.exports = function() {
 
     while (!stop) {
       let pageUrl = `${url}?limit=${limit}&offset=${items.length}`
-      console.log(`paginated: ${pageUrl}`)
       let { body: pageItems, status: pageStatus } = await single(
         pageUrl,
         method,

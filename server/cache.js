@@ -7,6 +7,7 @@ const {
   readdirSync,
   readFile: readFileAsync,
   readFileSync,
+  rmdirSync,
   unlink: unlinkAsync,
   unlinkSync,
   writeFile: writeFileAsync
@@ -38,7 +39,7 @@ module.exports = function createCache(directory, validity) {
       let path = join(dir, dirent.name)
       if (dirent.isDirectory()) {
         if (!pruneDir(path)) {
-          unlinkSync(path)
+          rmdirSync(path)
         } else {
           hasContent = true
         }

@@ -2,41 +2,24 @@
 'use strict'
 
 const { createHash } = require('crypto')
-const { dirname, join } = require('path')
 const request = require('request')
-const createCache = require('./cache')
 
 const CIRCLE_API = 'https://circleci.com/api/v1.1'
-const PROXY_PATH = 'circleci'
 
-let {
-  PERFO_ROOT_URL: ROOT_URL,
-  PERFO_DATA_DIR: DATA_DIR,
-  PERFO_CACHE_VALIDITY: CACHE_VALIDITY,
-  PERFO_CIRCLECI_TOKEN: CIRCLE_TOKEN,
-  PERFO_ORG_FILTER: ORG_FILTER
-} = process.env
+module.exports = function(injections, app, routePrefix) {
+  let {
+    config: { circleToken, orgFilter },
+    cache
+  } = injections
 
-if (!DATA_DIR) {
-  DATA_DIR = join(dirname(__dirname), 'data')
-}
+  function filterOrg(data) {
+    return orgFilter
+      ? data.filter((project) => project.username === orgFilter)
+      : data
+  }
 
-function filterOrg(data) {
-  return ORG_FILTER
-    ? data.filter((project) => project.username === ORG_FILTER)
-    : data
-}
-
-module.exports = function(app) {
-  let cache = createCache(
-    join(DATA_DIR, 'cache'),
-    Number(CACHE_VALIDITY) || 30 * 60 * 1000
-  )
-
-  let proxyPath = `${ROOT_URL || '/'}${PROXY_PATH}`
-
-  app.use(proxyPath, (req, res) => {
-    let path = req.originalUrl.slice(proxyPath.length)
+  app.use(routePrefix, (req, res) => {
+    let path = req.originalUrl.slice(routePrefix.length)
 
     let targetUrl = `${CIRCLE_API}${path}`
     if (path.startsWith('/download')) {
@@ -45,10 +28,10 @@ module.exports = function(app) {
       }
 
       delete req.headers.authorization
-      targetUrl = `${req.query.url}?circle-token=${CIRCLE_TOKEN}`
+      targetUrl = `${req.query.url}?circle-token=${circleToken}`
     }
 
-    let auth = Buffer.from(`${CIRCLE_TOKEN}:`).toString('base64')
+    let auth = Buffer.from(`${circleToken}:`).toString('base64')
     let proxyHeaders = {
       Authorization: `Basic ${auth}`
     }
@@ -61,9 +44,9 @@ module.exports = function(app) {
     let postProcess = (data) => data
 
     if (path === '/me') {
-      cacheKey = `users/${CIRCLE_TOKEN}/me`
+      cacheKey = `users/${circleToken}/me`
     } else if (path === '/projects') {
-      cacheKey = `users/${CIRCLE_TOKEN}/projects`
+      cacheKey = `users/${circleToken}/projects`
       postProcess = filterOrg
     } else if (path.startsWith('/project/')) {
       if (path.endsWith('/artifacts')) {

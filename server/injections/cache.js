@@ -21,10 +21,14 @@ const [mkdir, readFile, unlink, writeFile] = [
   writeFileAsync
 ].map(require('util').promisify)
 
-module.exports = function createCache(directory, validity) {
+module.exports = function(injections) {
+  let {
+    config: { cacheDir, cacheValidity }
+  } = injections
+
   // Create directory
   try {
-    mkdirSync(directory, { recursive: true })
+    mkdirSync(cacheDir, { recursive: true })
   } catch(e) {
     if (e.code !== 'EEXIST') {
       throw e
@@ -53,11 +57,11 @@ module.exports = function createCache(directory, validity) {
     }
     return hasContent
   }
-  pruneDir(directory, now)
+  pruneDir(cacheDir, now)
 
   return async function(key, getter) {
     let now = Date.now()
-    let path = join(directory, key)
+    let path = join(cacheDir, key)
 
     try {
       await mkdir(dirname(path), { recursive: true })
@@ -86,7 +90,7 @@ module.exports = function createCache(directory, validity) {
         await writeFile(
           path,
           JSON.stringify({
-            validUntil: now + validity,
+            validUntil: now + cacheValidity,
             payload
           })
         )

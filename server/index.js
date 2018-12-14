@@ -1,18 +1,16 @@
 /* eslint-env node */
 'use strict'
 
+const injections = require('./injections')
+const routes = require('./routes')
+const morgan = require('morgan')
+
 module.exports = function(app) {
-  let globSync = require('glob').sync
-  let mocks = globSync('./mocks/**/*.js', { cwd: __dirname }).map(require)
-  let proxies = globSync('./proxies/**/*.js', { cwd: __dirname }).map(require)
+  let {
+    config: { rootURL, logFormat }
+  } = injections
 
-  // Log proxy requests
-  let morgan = require('morgan')
-  app.use(morgan('dev'))
-
-  mocks.forEach((route) => route(app))
-  proxies.forEach((route) => route(app))
-
-  // CircleCI API proxy
-  require('./circleci-proxy')(app)
+  app.use(morgan(logFormat))
+  routes.customGraphs(injections, app, `${rootURL}custom-graphs`)
+  routes.circleProxy(injections, app, `${rootURL}circleci`)
 }

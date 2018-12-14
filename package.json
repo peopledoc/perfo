@@ -63,6 +63,7 @@
     "node": "6.* || 8.* || >= 10.*"
   },
   "dependencies": {
+    "compression": "^1.7.3",
     "express": "^4.16.4",
     "require-directory": "^2.1.1"
   }

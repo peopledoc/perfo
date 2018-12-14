@@ -6,7 +6,6 @@ export default Component.extend({
   circleci: service(),
   isCircleCIReady: readOnly('circleci.isReady'),
   circleUserName: readOnly('circleci.userName'),
-  circleToken: alias('circleci.token'),
 
   navigation: service(),
   selectedProjectId: alias('navigation.selectedProjectId'),
@@ -18,19 +17,6 @@ export default Component.extend({
   navigationAction: null,
 
   actions: {
-    setToken() {
-      this.set('circleToken', this.authToken)
-      this.circleci.userData.then((data) => {
-        if (data) {
-          this.set('authToken', '')
-        }
-      })
-    },
-
-    unsetToken() {
-      this.set('circleToken', null)
-    },
-
     selectProject(project) {
       this.set('selectedProjectId', project.id)
       this.send('selectBranch', 'master')

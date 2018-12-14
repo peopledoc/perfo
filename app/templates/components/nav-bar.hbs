@@ -1,11 +1,6 @@
 {{#if isCircleCIReady}}
   {{#if circleUserName}}
     <nav>
-      <section class="nav-auth">
-        {{circleUserName}}
-        {{#bs-button type="secondary" onClick=(action 'unsetToken')}}Deauth{{/bs-button}}
-      </section>
-
       <section class="nav-project">
         {{#if isLoadingProjects}}
           Loading project list...
@@ -42,15 +37,7 @@
   {{else}}
     <nav class="auth">
       <section class="nav-auth">
-        {{#bs-form model=this formLayout='inline' onSubmit=(action 'setToken') as |form|}}
-          {{form.element controlType="password" hiddenLabel="CircleCI auth token" placeholder="CircleCI auth token" required="true" property="authToken"}}
-          {{bs-button defaultText="Authenticate" type="primary" buttonType="submit"}}
-          <div class="form-group">
-            <label>
-              <a href="https://circleci.com/account/api" target="_blank">or click here to create an API token</a>.
-            </label>
-          </div>
-        {{/bs-form}}
+        The server token is invalid. Please update your server configuration.
       </section>
     </nav>
   {{/if}}

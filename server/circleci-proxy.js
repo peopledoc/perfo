@@ -9,7 +9,16 @@ const createCache = require('./cache')
 const CIRCLECI_API = 'https://circleci.com/api/v1.1'
 const PROXY_PATH = '/circleci'
 
-const { PERFO_ROOT_URL, PERFO_CACHE_DIR, PERFO_CACHE_VALIDITY } = process.env
+const {
+  PERFO_ROOT_URL,
+  PERFO_CACHE_DIR,
+  PERFO_CACHE_VALIDITY,
+  PERFO_CIRCLECI_TOKEN
+} = process.env
+
+if (!PERFO_CIRCLECI_TOKEN) {
+  throw new Error('Missing CircleCI token: please set PERFO_CIRCLECI_TOKEN')
+}
 
 module.exports = function(app) {
   let cache = createCache(
@@ -21,15 +30,6 @@ module.exports = function(app) {
 
   app.use(proxyPath, (req, res) => {
     let path = req.originalUrl.slice(proxyPath.length)
-    let auth = req.headers.authorization
-
-    if (!auth) {
-      return res.status(403).send('Authorization required')
-    }
-
-    let [token] = Buffer.from(auth.replace(/^Basic /, ''), 'base64')
-      .toString()
-      .split(':')
 
     let targetUrl = `${CIRCLECI_API}${path}`
     if (path.startsWith('/download')) {
@@ -38,10 +38,13 @@ module.exports = function(app) {
       }
 
       delete req.headers.authorization
-      targetUrl = `${req.query.url}?circle-token=${token}`
+      targetUrl = `${req.query.url}?circle-token=${PERFO_CIRCLECI_TOKEN}`
     }
 
-    let proxyHeaders = { Authorization: auth }
+    let auth = Buffer.from(`${PERFO_CIRCLECI_TOKEN}:`).toString('base64')
+    let proxyHeaders = {
+      Authorization: `Basic ${auth}`
+    }
 
     if (req.headers.accept) {
       proxyHeaders.Accept = req.headers.accept
@@ -49,9 +52,9 @@ module.exports = function(app) {
 
     let cacheKey
     if (path === '/me') {
-      cacheKey = `users/${token}/me`
+      cacheKey = `users/${PERFO_CIRCLECI_TOKEN}/me`
     } else if (path === '/projects') {
-      cacheKey = `users/${token}/projects`
+      cacheKey = `users/${PERFO_CIRCLECI_TOKEN}/projects`
     } else if (path.startsWith('/project/')) {
       if (path.endsWith('/artifacts')) {
         // /project/github/myorg/myproject/build/artifacts

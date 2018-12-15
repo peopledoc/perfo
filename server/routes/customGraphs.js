@@ -14,6 +14,10 @@ function createCustomGraph(id, payload) {
   }
 }
 
+function keyFor(project) {
+  return `custom-graphs/${project}`
+}
+
 module.exports = function(injections, app, routePrefix) {
   let {
     asyncHandler,
@@ -23,17 +27,21 @@ module.exports = function(injections, app, routePrefix) {
   app.get(
     `${routePrefix}/:project`,
     asyncHandler(async(req, res) => {
-      let key = `projects/${req.params.project}/custom-graphs`
+      let key = keyFor(req.params.project)
       let data = (await getItem(key)) || { seq: 0, graphs: [] }
 
-      res.json(data.graphs)
+      res.json(
+        data.graphs.map((graph) =>
+          Object.assign(graph, { project: req.params.project })
+        )
+      )
     })
   )
 
   app.post(
     `${routePrefix}/:project`,
     asyncHandler(async(req, res) => {
-      let key = `projects/${req.params.project}/custom-graphs`
+      let key = keyFor(req.params.project)
       let data = (await getItem(key)) || { seq: 0, graphs: [] }
       let graph = createCustomGraph(data.seq + 1, req.body)
       data.seq = data.seq + 1
@@ -48,13 +56,14 @@ module.exports = function(injections, app, routePrefix) {
   )
 
   app.delete(
-    `${routePrefix}/:project/:index`,
+    `${routePrefix}/:project/:id`,
     asyncHandler(async(req, res) => {
-      let key = `projects/${req.params.project}/custom-graphs`
-      let index = Number(req.params.index)
+      let key = keyFor(req.params.project)
+      let id = Number(req.params.id)
       let graphs = (await getItem(key)) || []
+      let index = graphs.findIndex((graph) => graph.id === id)
 
-      if (!graphs[index]) {
+      if (index === -1) {
         res.sendStatus(404)
       } else {
         graphs.splice(index, 1)
@@ -66,23 +75,21 @@ module.exports = function(injections, app, routePrefix) {
   )
 
   app.patch(
-    `${routePrefix}/:project/:index`,
+    `${routePrefix}/:project/:id`,
     asyncHandler(async(req, res) => {
-      let key = `projects/${req.params.project}/custom-graphs`
-      let index = Number(req.params.index)
+      let key = keyFor(req.params.project)
+      let id = Number(req.params.id)
       let graphs = (await getItem(key)) || []
-      let graph = graphs[index]
+      let index = graphs.findIndex((graph) => graph.id === id)
 
-      if (!graph) {
+      if (index === -1) {
         res.sendStatus(404)
       } else {
-        graphs[index] = createCustomGraph(
-          graph.project,
-          Object.assign(graph, req.body)
-        )
+        let graph = graphs[index]
+        graphs[index] = createCustomGraph(id, Object.assign(graph, req.body))
         await setItem(key, graphs)
 
-        res.json(graph)
+        res.json(Object.assign(graphs[index], { project: req.params.project }))
       }
     })
   )

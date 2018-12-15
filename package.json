@@ -40,7 +40,6 @@
     "ember-highcharts": "^1.0.1",
     "ember-inflector": "^3.0.0",
     "ember-load-initializers": "^1.1.0",
-    "ember-localstorage-adapter": "^1.0.0",
     "ember-maybe-import-regenerator": "^0.1.6",
     "ember-moment": "^7.8.0",
     "ember-power-select": "^2.0.9",
@@ -63,6 +62,7 @@
     "node": "6.* || 8.* || >= 10.*"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "compression": "^1.7.3",
     "express": "^4.16.4",
     "require-directory": "^2.1.1"

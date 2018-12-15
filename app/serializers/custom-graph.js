@@ -1,3 +1,5 @@
-import { LSSerializer } from 'ember-localstorage-adapter'
+import DS from 'ember-data'
 
-export default LSSerializer.extend()
+const { JSONSerializer } = DS
+
+export default JSONSerializer.extend({})

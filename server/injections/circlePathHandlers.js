@@ -1,6 +1,41 @@
 /* eslint-env node */
 'use strict'
 
+const keepKeys = {
+  artifact: ['path', 'url'],
+  build: [
+    'build_num',
+    'start_time',
+    'build_time_millis',
+    'branch',
+    'vcs_revision',
+    'subject',
+    'lifecycle',
+    'outcome',
+    'workflows',
+    'has_artifacts',
+    'vcs_type',
+    'username',
+    'reponame'
+  ],
+  project: [
+    'vcs_url',
+    'vcs_type',
+    'followed',
+    'username',
+    'reponame',
+    'branches'
+  ]
+}
+
+function prune(model, item) {
+  let pruned = {}
+  for (let key of keepKeys[model]) {
+    pruned[key] = item[key]
+  }
+  return pruned
+}
+
 module.exports = function(injections) {
   let {
     config: { circleToken, orgFilter, maxBuildAge },
@@ -19,7 +54,7 @@ module.exports = function(injections) {
     {
       match: '/me',
       cacheKey() {
-        return `users/${circleToken}/me`
+        return `users-${circleToken}/info`
       }
     },
 
@@ -27,14 +62,15 @@ module.exports = function(injections) {
     {
       match: '/projects',
       cacheKey() {
-        return `users/${circleToken}/projects`
+        return `users-${circleToken}/projects`
       },
       postProcessor() {
         // Filter projects by organization
         return (data) =>
-          orgFilter
+          (orgFilter
             ? data.filter((project) => project.username === orgFilter)
             : data
+          ).map((project) => prune('project', project))
       }
     },
 
@@ -62,7 +98,10 @@ module.exports = function(injections) {
       match: /^\/project\/.*\/artifacts$/,
       cacheKey(path) {
         let [, , type, org, project, buildNum] = path.split('/')
-        return `projects/${type}.${org}.${project}/build-${buildNum}/artifacts`
+        return `${type}.${org}.${project}/artifacts-${buildNum}`
+      },
+      postProcessor() {
+        return (data) => data.map((artifact) => prune('artifact', artifact))
       }
     },
 
@@ -72,7 +111,7 @@ module.exports = function(injections) {
       match: /^\/project\//,
       cacheKey(path) {
         let { type, org, project, branch } = splitBuildsUrl(path)
-        return `projects/${type}.${org}.${project}/builds-${branch}`
+        return `${type}.${org}.${project}/builds-${branch}`
       },
       requestor(path) {
         let { type, org, project, branch } = splitBuildsUrl(path)
@@ -96,12 +135,12 @@ module.exports = function(injections) {
       },
       postProcessor(path) {
         let { type, org, project, branch } = splitBuildsUrl(path)
-        return async function(newBuilds) {
+        return async function(data) {
           let storeKey = `project-builds/${type}-${org}-${project}-${branch}`
           let projectBuilds = await store.getItem(storeKey)
 
           if (!projectBuilds) {
-            projectBuilds = newBuilds
+            projectBuilds = data
           } else {
             let existingBuildNums = projectBuilds.map(
               (build) => build.build_num
@@ -109,17 +148,17 @@ module.exports = function(injections) {
 
             // Store new builds
             projectBuilds.push(
-              newBuilds.filter(
+              data.filter(
                 (build) => existingBuildNums.indexOf(build.build_num) === -1
               )
             )
           }
 
-          // Exclude builds that are too old
+          // Exclude builds that are too old and prune them
           let minDate = Date.now() - maxBuildAge
-          projectBuilds = projectBuilds.filter(
-            (build) => new Date(build.start_time).getTime() > minDate
-          )
+          projectBuilds = projectBuilds
+            .filter((build) => new Date(build.start_time).getTime() > minDate)
+            .map((build) => prune('build', build))
 
           await store.setItem(storeKey, projectBuilds)
           return projectBuilds

@@ -18,8 +18,19 @@ module.exports = function() {
           if (error) {
             reject(error)
           } else {
+            let parsed
+            try {
+              parsed = JSON.parse(body)
+            } catch(e) {
+              reject(
+                new Error(
+                  `Invalid JSON (status = ${response.statusCode}):\n${body}`
+                )
+              )
+            }
+
             resolve({
-              body: JSON.parse(body),
+              body: parsed,
               status: response.statusCode
             })
           }
@@ -31,7 +42,7 @@ module.exports = function() {
   async function paginated(url, method, headers, shouldStop) {
     let items = []
     let stop = false
-    let limit = 30
+    let limit = 100
     let status
 
     while (!stop) {

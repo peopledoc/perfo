@@ -5,6 +5,7 @@ const injections = require('./injections')
 const routes = require('./routes')
 const morgan = require('morgan')
 const compression = require('compression')
+const bodyParser = require('body-parser')
 
 module.exports = function(app) {
   let {
@@ -14,6 +15,7 @@ module.exports = function(app) {
 
   app.use(morgan(logFormat))
   app.use(compression())
+  app.use(bodyParser.json())
 
   routes.customGraphs(injections, app, `${rootURL}custom-graphs`)
   routes.circleProxy(injections, app, `${rootURL}circleci`)

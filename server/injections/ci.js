@@ -10,48 +10,53 @@ module.exports = function(injections) {
     return providers
   }, {})
 
-  async function queryProvider(name, query, prefixIDs = true) {
+  async function queryProvider(name, query) {
     let result = await query(providers[name])
-
-    if (prefixIDs) {
-      result = result.map((item) =>
-        Object.assign(item, { id: `${name}:${item.id}` })
-      )
-    }
 
     return result
   }
 
-  async function queryProviders(query, expectItemArrays = true) {
-    let results = await Promise.all(
-      providerNames.map((name) => queryProvider(name, query, expectItemArrays))
-    )
+  function queryProviders(query, options) {
+    options = Object.assign(options, {
+      postProcess: (name, data) => data
+    })
 
-    if (expectItemArrays) {
-      return [].concat(...results)
-    } else {
-      return providerNames.reduce(
-        (data, name, index) =>
-          data.concat([Object.assign(results[index], { id: name })]),
-        []
+    return Promise.all(
+      providerNames.map(async(name) =>
+        options.postProcess(name, await queryProvider(name, query))
       )
-    }
+    )
   }
 
   return {
-    providers() {
-      return queryProviders((provider) => provider.info(), false)
+    async providers() {
+      let data = await queryProviders((provider) => provider.info(), {
+        postProcess(name, data) {
+          let ret = {}
+          ret[name] = data
+          return ret
+        }
+      })
+
+      return Object.assign({}, ...data)
     },
 
-    projects() {
-      return queryProviders((provider) => provider.projects())
+    async projects() {
+      return queryProviders((provider) => provider.projects(), {
+        postProcess(name, data) {
+          data.forEach((project) => (project.provider = name))
+          return data
+        }
+      })
     },
 
     builds(project, branch) {
       let [providerName, ...projectId] = project.split(':')
 
       if (providerName in providers) {
-        return providers[providerName].builds(projectId.join(':'), branch)
+        return queryProvider(providerName, (provider) =>
+          provider.builds(projectId.join(':'), branch)
+        )
       }
     },
 
@@ -59,10 +64,8 @@ module.exports = function(injections) {
       let [providerName, ...projectId] = project.split(':')
 
       if (providerName in providers) {
-        return providers[providerName].customGraphData(
-          projectId.join(':'),
-          branch,
-          customGraph
+        return queryProvider(providerName, (provider) =>
+          provider.customGraphData(projectId.join(':'), branch, customGraph)
         )
       }
     }

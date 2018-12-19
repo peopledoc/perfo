@@ -21,7 +21,7 @@ export default Component.extend({
         chart: {
           height: '600px',
           type: this.graphType,
-          zoomType: 'x'
+          zoomType: 'xy'
         },
         legend: {
           enabled: this.showLegend

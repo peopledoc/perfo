@@ -28,8 +28,10 @@ export default Component.extend({
         },
         plotOptions: {
           spline: {
+            lineWidth: 1,
             marker: {
-              enabled: true
+              enabled: true,
+              radius: 2
             }
           }
         },

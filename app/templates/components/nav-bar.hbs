@@ -11,7 +11,7 @@
         searchField='name'
         as |project|
       }}
-        {{project.name}}
+        {{nav-bar/-project project=project}}
       {{/power-select}}
     {{/if}}
   </section>
@@ -28,6 +28,12 @@
         {{branch}}
       {{/power-select}}
     {{/if}}
+  </section>
+
+  <section class="nav-providers">
+    {{#each providers as |provider|}}
+      {{nav-bar/-provider provider=provider}}
+    {{/each}}
   </section>
 </nav>
 

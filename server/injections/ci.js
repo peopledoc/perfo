@@ -17,9 +17,12 @@ module.exports = function(injections) {
   }
 
   function queryProviders(query, options) {
-    options = Object.assign(options, {
-      postProcess: (name, data) => data
-    })
+    options = Object.assign(
+      {
+        postProcess: (name, data) => data
+      },
+      options
+    )
 
     return Promise.all(
       providerNames.map(async(name) =>
@@ -29,25 +32,29 @@ module.exports = function(injections) {
   }
 
   return {
-    async providers() {
-      let data = await queryProviders((provider) => provider.info(), {
+    providers() {
+      return queryProviders((provider) => provider.info(), {
         postProcess(name, data) {
-          let ret = {}
-          ret[name] = data
-          return ret
+          return Object.assign(data, { id: name })
         }
       })
-
-      return Object.assign({}, ...data)
     },
 
     async projects() {
-      return queryProviders((provider) => provider.projects(), {
-        postProcess(name, data) {
-          data.forEach((project) => (project.provider = name))
-          return data
+      let projectLists = await queryProviders(
+        (provider) => provider.projects(),
+        {
+          postProcess(name, data) {
+            data.forEach((project) => {
+              project.id = `${name}:${project.id}`
+              project.provider = name
+            })
+            return data
+          }
         }
-      })
+      )
+
+      return [].concat(...projectLists)
     },
 
     builds(project, branch) {

@@ -6,6 +6,9 @@ import { not, sort } from '@ember/object/computed'
 export default Service.extend({
   store: service(),
 
+  providers: computed(function() {
+    return this.store.findAll('provider')
+  }),
   isLoadingProjects: not('projects.isSettled'),
   projects: computed(function() {
     return this.store.findAll('project')

@@ -9,7 +9,7 @@ module.exports = function(injections) {
   function single(url, method, headers) {
     return new Promise((resolve, reject) => {
       let jar = request.jar()
-
+      logger.debug(`single ${method} ${url}`)
       request(
         {
           url,

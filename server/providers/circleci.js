@@ -2,6 +2,8 @@
 'use strict'
 
 const CIRCLE_API = 'https://circleci.com/api/v1.1'
+const CIRCLECI_ICON
+  = 'https://d3r49iyjzglexf.cloudfront.net/favicon-066b37ff00f0f968b903c13ae88b5573b62665aea8fbe91bb61c55dfa9446523.ico'
 
 module.exports = function(injections) {
   let {
@@ -164,17 +166,29 @@ module.exports = function(injections) {
 
   return {
     async info() {
-      let user, connected
+      let response, connected, user
 
       try {
-        user = await circleRequest('info', '/me')
+        response = await circleRequest('info', '/me')
         connected = true
       } catch(e) {
         logger.error('circleci info', e)
         connected = false
       }
 
-      return { username: user.name, connected }
+      if (response.status >= 400) {
+        logger.error('circleci info', `status ${response.status}`)
+        connected = false
+      } else {
+        user = response.body
+      }
+
+      return {
+        account: user.name,
+        connected,
+        icon: CIRCLECI_ICON,
+        name: 'CircleCI'
+      }
     },
 
     async projects() {

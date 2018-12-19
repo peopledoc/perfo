@@ -4,11 +4,13 @@ import { inject as service } from '@ember/service'
 
 export default Component.extend({
   navigation: service(),
+
   selectedProjectId: alias('navigation.selectedProjectId'),
   selectedBranch: alias('navigation.selectedBranch'),
   selectedProject: readOnly('navigation.selectedProject'),
   isLoadingProjects: readOnly('navigation.isLoadingProjects'),
   sortedProjects: readOnly('navigation.sortedProjects'),
+  providers: readOnly('navigation.providers'),
 
   navigationAction: null,
 

@@ -47,19 +47,24 @@ nav a:hover {
   text-decoration: underline;
 }
 
-.nav-auth,
 .nav-project,
-.nav-branch {
+.nav-branch,
+.nav-providers {
   padding: 1rem;
-}
-
-.nav-auth label {
-  padding: 0 1rem;
-}
-
-.nav-project,
-.nav-branch {
   flex-grow: 1;
+}
+
+.provider-icon {
+  max-height: 1rem;
+}
+
+.provider:before {
+  content: '●';
+  color: #f33;
+}
+
+.provider.provider-connected:before {
+  color: #3f3;
 }
 
 .main {

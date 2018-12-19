@@ -74,10 +74,12 @@ export default LineGraph.extend({
           // filter out artifacts without a point with that label
           .filter((set) => set.points.find((point) => point.label === name))
           // Generate data points
-          .map((set) => [
-            set.date,
-            set.points.find((point) => point.label === name).value
-          ])
+          .map((set) => {
+            return {
+              x: set.date,
+              y: set.points.find((point) => point.label === name).value
+            }
+          })
       }
     })
   })

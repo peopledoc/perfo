@@ -1,13 +1,13 @@
 import { module, test } from 'qunit'
 import { setupTest } from 'ember-qunit'
 
-module('Unit | Serializer | circleci', function(hooks) {
+module('Unit | Model | dataset', function(hooks) {
   setupTest(hooks)
 
+  // Replace this with your real tests.
   test('it exists', function(assert) {
     let store = this.owner.lookup('service:store')
-    let serializer = store.serializerFor('circleci')
-
-    assert.ok(serializer)
+    let model = store.createRecord('dataset', {})
+    assert.ok(model)
   })
 })

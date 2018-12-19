@@ -1,50 +1,34 @@
-{{#if isCircleCIReady}}
-  {{#if circleUserName}}
-    <nav>
-      <section class="nav-project">
-        {{#if isLoadingProjects}}
-          Loading project list...
-        {{else}}
-          {{#power-select
-            selected=selectedProject
-            options=sortedProjects
-            onchange=(action 'selectProject')
-            placeholder="Select a project..."
-            as |project|
-          }}
-            {{project.displayName}}
-          {{/power-select}}
-        {{/if}}
-      </section>
+<nav>
+  <section class="nav-project">
+    {{#if isLoadingProjects}}
+      Loading project list...
+    {{else}}
+      {{#power-select
+        selected=selectedProject
+        options=sortedProjects
+        onchange=(action 'selectProject')
+        placeholder="Select a project..."
+        searchField='name'
+        as |project|
+      }}
+        {{project.name}}
+      {{/power-select}}
+    {{/if}}
+  </section>
 
-      <section class="nav-branch">
-        {{#if selectedProject}}
-          {{#power-select
-            selected=selectedBranch
-            options=selectedProject.branches
-            onchange=(action 'selectBranch')
-            placeholder="Select a branch..."
-            as |branch|
-          }}
-            {{branch}}
-          {{/power-select}}
-        {{/if}}
-      </section>
-    </nav>
+  <section class="nav-branch">
+    {{#if selectedProject}}
+      {{#power-select
+        selected=selectedBranch
+        options=selectedProject.branches
+        onchange=(action 'selectBranch')
+        placeholder="Select a branch..."
+        as |branch|
+      }}
+        {{branch}}
+      {{/power-select}}
+    {{/if}}
+  </section>
+</nav>
 
-    {{yield}}
-
-  {{else}}
-    <nav class="auth">
-      <section class="nav-auth">
-        The server token is invalid. Please update your server configuration.
-      </section>
-    </nav>
-  {{/if}}
-{{else}}
-  <nav class="auth">
-    <section class="nav-auth">
-      Checking CircleCI authentication...
-    </section>
-  </nav>
-{{/if}}
+{{yield}}

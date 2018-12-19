@@ -53,6 +53,7 @@ module.exports = function(injections) {
         throw e
       }
 
+      logger.debug(`cache miss: ${key}`)
       let payload = await getter()
       if (!payload.__nocache) {
         await store.setItem(storeKey, {
@@ -65,3 +66,5 @@ module.exports = function(injections) {
     }
   }
 }
+
+module.exports.hasScope = true

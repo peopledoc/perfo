@@ -5,11 +5,11 @@
     {{#bs-accordion selected=accordionSelectedItem as |acc|}}
       {{#acc.item value='main' as |item|}}
         {{#item.title}}
-          Build durations for {{project.displayName}}
+          Build durations for {{project.name}} on {{branch}}
         {{/item.title}}
 
         {{#item.body}}
-          {{ci-perf-graph projectBuilds=validBuilds projectHasWorkflows=projectHasWorkflows title=mainGraphTitle}}
+          {{ci-perf-graph projectBuilds=sortedBuilds title=mainGraphTitle}}
         {{/item.body}}
       {{/acc.item}}
 
@@ -20,7 +20,7 @@
           {{/item.title}}
 
           {{#item.body}}
-            {{custom-graph project=project projectBuilds=validBuilds graph=graph}}
+            {{custom-graph project=project branch=branch graph=graph}}
             {{graph-controls graph=graph graphChangedAction=(action 'graphChanged')}}
           {{/item.body}}
         {{/acc.item}}

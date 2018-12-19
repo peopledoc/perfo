@@ -3,10 +3,13 @@
 
 const request = require('request')
 
-module.exports = function() {
+module.exports = function(injections) {
+  let { logger } = injections
+
   function single(url, method, headers) {
     return new Promise((resolve, reject) => {
       let jar = request.jar()
+
       request(
         {
           url,
@@ -16,6 +19,7 @@ module.exports = function() {
         },
         (error, response, body) => {
           if (error) {
+            logger.debug(`single ${method} ${url} error`)
             reject(error)
           } else {
             let parsed
@@ -29,6 +33,7 @@ module.exports = function() {
               )
             }
 
+            logger.debug(`single ${method} ${url} ${response.statusCode}`)
             resolve({
               body: parsed,
               status: response.statusCode
@@ -39,14 +44,46 @@ module.exports = function() {
     })
   }
 
-  async function paginated(url, method, headers, shouldStop) {
+  function buildPageUrl(baseUrl, offset, query, pagination) {
+    query = Object.assign({}, query)
+    query[pagination.offsetParam] = offset
+    query[pagination.limitParam] = pagination.limit
+
+    let queryString = Object.keys(query)
+      .reduce(
+        (params, key) =>
+          params.concat([`${key}=${encodeURIComponent(query[key])}`]),
+        []
+      )
+      .join('&')
+
+    return `${baseUrl}?${queryString}`
+  }
+
+  async function paginated({
+    url,
+    query,
+    method,
+    headers,
+    shouldStop,
+    pagination
+  }) {
+    pagination = Object.assign(
+      {
+        limit: 100,
+        limitParam: 'limit',
+        offsetParam: 'offset'
+      },
+      pagination
+    )
+
     let items = []
     let stop = false
-    let limit = 100
     let status
 
+    logger.debug(`paginated ${method} ${url}`)
     while (!stop) {
-      let pageUrl = `${url}?limit=${limit}&offset=${items.length}`
+      let pageUrl = buildPageUrl(url, items.length, query, pagination)
       let { body: pageItems, status: pageStatus } = await single(
         pageUrl,
         method,
@@ -59,7 +96,7 @@ module.exports = function() {
 
       items.push(...pageItems)
 
-      if (pageItems.length < limit) {
+      if (pageItems.length < pagination.limit) {
         stop = true
       } else if (shouldStop) {
         stop = shouldStop(pageItems)

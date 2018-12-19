@@ -27,35 +27,15 @@ export default Controller.extend({
   isLoadingBuilds: not('projectBuilds.isSettled'),
   projectBuilds: computed('project', 'branch', function() {
     return this.project
-      ? this.store.query('circleci-build', {
+      ? this.store.query('build', {
         project: this.project.id,
         branch: this.branch
       })
       : Promise.resolve([])
   }),
 
-  // True when workflows are active for any build
-  projectHasWorkflows: computed('projectBuilds.@each', function() {
-    return this.projectBuilds.any((build) => !!build.workflows)
-  }),
-
-  // Successful projects sorted by start time ; when workflows are active,
-  // contains only builds with workflows
-  validBuilds: computed(
-    'projectBuilds.@each',
-    'projectHasWorkflows',
-    function() {
-      let filtered = this.projectBuilds
-        .filterBy('lifecycle', 'finished')
-        .filterBy('outcome', 'success')
-
-      if (this.projectHasWorkflows) {
-        filtered = filtered.filter((build) => !!build.workflows)
-      }
-
-      return filtered.sortBy('start_time')
-    }
-  ),
+  buildsSorting: Object.freeze(['start']),
+  sortedBuilds: sort('projectBuilds', 'buildsSorting'),
 
   actions: {
     toggleAddCustomGraph() {
@@ -66,6 +46,11 @@ export default Controller.extend({
           'newCustomGraph',
           this.store.createRecord('custom-graph', {
             project: this.project.id,
+            title: '',
+            jobName: '',
+            artifactMatches: '',
+            branchMatches: '',
+            order: 0,
             showLegend: true,
             formatter: 'none'
           })

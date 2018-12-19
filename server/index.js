@@ -17,8 +17,8 @@ module.exports = function(app) {
   app.use(compression())
   app.use(bodyParser.json())
 
-  routes.customGraphs(injections, app, `${rootURL}custom-graphs`)
-  routes.circleProxy(injections, app, `${rootURL}circleci`)
+  routes.projects(injections, app, `${rootURL}projects`)
+  routes.customGraphs(injections, app, `${rootURL}projects/:project/graphs`)
 
   app.use((err, req, res, next) => {
     logger.error('express error catching', err)

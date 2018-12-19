@@ -3,10 +3,6 @@ import { alias, readOnly } from '@ember/object/computed'
 import { inject as service } from '@ember/service'
 
 export default Component.extend({
-  circleci: service(),
-  isCircleCIReady: readOnly('circleci.isReady'),
-  circleUserName: readOnly('circleci.userName'),
-
   navigation: service(),
   selectedProjectId: alias('navigation.selectedProjectId'),
   selectedBranch: alias('navigation.selectedBranch'),

@@ -1,10 +1,8 @@
-import DS from 'ember-data'
+import ApplicationAdapter from './application'
 
-const { JSONAPIAdapter } = DS
-
-export default JSONAPIAdapter.extend({
+export default ApplicationAdapter.extend({
   _urlForProjectGraphs(project) {
-    return `/custom-graphs/${project}`
+    return `/projects/${project}/graphs`
   },
 
   _urlForProjectGraph(project, id) {

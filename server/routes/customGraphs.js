@@ -21,11 +21,13 @@ function keyFor(project) {
 module.exports = function(injections, app, routePrefix) {
   let {
     asyncHandler,
-    store: { getItem, setItem }
+    store: { getItem, setItem },
+    ci,
+    logger
   } = injections
 
   app.get(
-    `${routePrefix}/:project`,
+    `${routePrefix}`,
     asyncHandler(async(req, res) => {
       let key = keyFor(req.params.project)
       let data = (await getItem(key)) || { seq: 0, graphs: [] }
@@ -39,7 +41,7 @@ module.exports = function(injections, app, routePrefix) {
   )
 
   app.post(
-    `${routePrefix}/:project`,
+    `${routePrefix}`,
     asyncHandler(async(req, res) => {
       let key = keyFor(req.params.project)
       let data = (await getItem(key)) || { seq: 0, graphs: [] }
@@ -56,40 +58,60 @@ module.exports = function(injections, app, routePrefix) {
   )
 
   app.delete(
-    `${routePrefix}/:project/:id`,
+    `${routePrefix}/:id`,
     asyncHandler(async(req, res) => {
       let key = keyFor(req.params.project)
       let id = Number(req.params.id)
-      let graphs = (await getItem(key)) || []
-      let index = graphs.findIndex((graph) => graph.id === id)
+      let data = (await getItem(key)) || { seq: 0, graphs: [] }
+      let index = data.graphs.findIndex((graph) => graph.id === Number(id))
 
       if (index === -1) {
         res.sendStatus(404)
       } else {
-        graphs.splice(index, 1)
-        await setItem(key, graphs)
+        data.graphs.splice(index, 1)
+        await setItem(key, data)
 
-        res.sendStatus(201)
+        res.sendStatus(204)
       }
     })
   )
 
   app.patch(
-    `${routePrefix}/:project/:id`,
+    `${routePrefix}/:id`,
     asyncHandler(async(req, res) => {
       let key = keyFor(req.params.project)
       let id = Number(req.params.id)
-      let graphs = (await getItem(key)) || []
-      let index = graphs.findIndex((graph) => graph.id === id)
+      let data = (await getItem(key)) || { seq: 0, graphs: [] }
+      let index = data.graphs.findIndex((graph) => graph.id === Number(id))
 
       if (index === -1) {
         res.sendStatus(404)
       } else {
-        let graph = graphs[index]
-        graphs[index] = createCustomGraph(id, Object.assign(graph, req.body))
-        await setItem(key, graphs)
+        let graph = data.graphs[index]
+        data.graphs[index] = createCustomGraph(
+          id,
+          Object.assign(graph, req.body)
+        )
+        await setItem(key, data)
 
-        res.json(Object.assign(graphs[index], { project: req.params.project }))
+        res.json(
+          Object.assign(data.graphs[index], { project: req.params.project })
+        )
+      }
+    })
+  )
+
+  app.get(
+    `${routePrefix}/:id/:branch`,
+    asyncHandler(async(req, res) => {
+      let { project, id, branch } = req.params
+      let data = (await getItem(keyFor(project))) || { seq: 0, graphs: [] }
+      let graph = data.graphs.find((g) => g.id === Number(id))
+
+      if (!graph) {
+        res.sendStatus(404)
+      } else {
+        res.json(await ci.customGraphData(project, branch, graph))
       }
     })
   )

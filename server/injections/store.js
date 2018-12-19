@@ -142,3 +142,5 @@ module.exports = function(injections) {
     keys
   }
 }
+
+module.exports.hasScope = true

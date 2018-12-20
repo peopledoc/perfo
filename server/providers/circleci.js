@@ -123,8 +123,8 @@ module.exports = function(injections) {
 
   async function circleBuildArtifacts(project, build) {
     // Fetch build artifact list from the store
-    let cacheKey = join('artifacts', project, build.id)
-    let storeKey = join('circleci', `${project}-artifacts`, build.id)
+    let cacheKey = join('artifacts', project, `${build.id}`)
+    let storeKey = join('circleci', `${project}-artifacts`, `${build.id}`)
     let artifacts = await store.getItem(storeKey)
 
     if (!artifacts) {

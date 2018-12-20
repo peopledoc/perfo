@@ -257,7 +257,12 @@ module.exports = function(injections) {
           }
 
           if (artifactData) {
-            return { date: build.start, points: artifactData }
+            return {
+              date: build.start,
+              subject: build.subject,
+              revision: build.revision,
+              points: artifactData
+            }
           }
 
           return null

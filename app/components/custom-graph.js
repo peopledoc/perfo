@@ -66,21 +66,28 @@ export default LineGraph.extend({
       )
     ]
 
-    // Extract timestamps and index datasets by date
+    // Extract timestamps
     let timestamps = this.dataSets.map((set) => set.date)
+
+    // Index datasets by date
     let dataSets = this.dataSets.reduce((dataSets, set) => {
-      dataSets[set.date] = set.points
+      dataSets[set.date] = set
       return dataSets
     }, {})
 
-    // Build one series for each unique label with all data points with that
-    // label from all artifacts
+    // Build one series for each unique label with matching data points at each
+    // timestamp, filling missing timestamps with zeroes
     return seriesNames.map((name) => {
       return {
         name,
         data: timestamps.map((timestamp) => {
-          let point = dataSets[timestamp].find((point) => point.label === name)
-          return { x: timestamp, y: point ? point.value : 0 }
+          let set = dataSets[timestamp]
+          let point = set.points.find((point) => point.label === name)
+          return {
+            x: timestamp,
+            y: point ? point.value : 0,
+            name: `${set.subject}<br><i>${set.revision}</i>`
+          }
         })
       }
     })

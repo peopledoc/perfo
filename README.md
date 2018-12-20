@@ -222,6 +222,13 @@ The store has the following methods:
 * `async delItem(key)`: remove an item from the store
 * `async keys(path = '')`: list all keys in the store in a given path
 
+> *Note: using cache vs. store?*
+>
+> When requesting data from a remote CI provider API, you should use the cache
+> for resources that change over time (eg. project list, project builds) and
+> the store for resources that do not change (eg. payload for a specific build
+> artifact).
+
 **`logger`: very simple logging facility**
 
 Has the following methods:

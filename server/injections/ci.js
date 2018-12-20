@@ -72,7 +72,12 @@ module.exports = function(injections) {
 
       if (providerName in providers) {
         return queryProvider(providerName, (provider) =>
-          provider.customGraphData(projectId.join(':'), branch, customGraph)
+          provider.customGraphData(
+            projectId.join(':'),
+            branch,
+            customGraph.jobName,
+            new RegExp(customGraph.artifactMatches)
+          )
         )
       }
     }

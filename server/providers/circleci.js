@@ -86,7 +86,7 @@ module.exports = function(injections) {
         duration: build.build_time_millis,
         subject: build.subject,
         revision: build.vcs_revision,
-        hasArtifacts: build.has_artifacts
+        _hasArtifacts: build.has_artifacts
       }
     })
 
@@ -235,11 +235,9 @@ module.exports = function(injections) {
       return circleProjectBuilds(project, branch)
     },
 
-    async customGraphData(project, branch, customGraph) {
-      let artifactRegex = new RegExp(customGraph.artifactMatches)
-
+    async customGraphData(project, branch, jobName, artifactRegex) {
       let builds = (await circleProjectBuilds(project, branch)).filter(
-        (build) => build.hasArtifacts
+        (build) => build.job === jobName && build._hasArtifacts
       )
 
       let data = await Promise.all(

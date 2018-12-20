@@ -1,6 +1,8 @@
 /* eslint-env node */
 'use strict'
 
+const { join } = require('path')
+
 const CIRCLE_API = 'https://circleci.com/api/v1.1'
 const CIRCLECI_ICON
   = 'https://d3r49iyjzglexf.cloudfront.net/favicon-066b37ff00f0f968b903c13ae88b5573b62665aea8fbe91bb61c55dfa9446523.ico'
@@ -22,13 +24,14 @@ module.exports = function(injections) {
       Accept: 'application/json'
     }
 
-    return await cache(`circleci/${cacheKey}`, function() {
+    return await cache(join('circleci', cacheKey), function() {
       return requestor(targetUrl, 'GET', headers)
     })
   }
 
   async function circleProjectBuilds(project, branch) {
-    let storeKey = `circleci/${project}-${branch}`
+    let cacheKey = join(project.replace(/:/g, '.'), `builds-${branch}`)
+    let storeKey = join('circleci', `${project}-${branch}`)
     let minDate = new Date(Date.now() - maxBuildAge).toISOString()
     let url = `/project/${project.replace(/:/g, '/')}/tree/${branch}`
     let response
@@ -37,26 +40,26 @@ module.exports = function(injections) {
     let existingBuilds = projectBuilds.map((build) => build.id)
 
     try {
-      response = await circleRequest(
-        `${project.replace(/:/g, '.')}/builds-${branch}`,
+      response = await circleRequest(cacheKey, url, async function(
         url,
-        async function(url, method, headers) {
-          // Fetch all pages until we find either a build we already have,
-          // or a build that is too old
-          return paginated({
-            url,
-            method,
-            headers,
-            query: { filter: 'successful' },
-            shouldStop: (pageItems) =>
-              pageItems.some(
-                (build) =>
-                  existingBuilds.indexOf(build.build_num) !== -1
-                  || build.start_time < minDate
-              )
-          })
-        }
-      )
+        method,
+        headers
+      ) {
+        // Fetch all pages until we find either a build we already have,
+        // or a build that is too old
+        return paginated({
+          url,
+          method,
+          headers,
+          query: { filter: 'successful' },
+          shouldStop: (pageItems) =>
+            pageItems.some(
+              (build) =>
+                existingBuilds.indexOf(build.build_num) !== -1
+                || build.start_time < minDate
+            )
+        })
+      })
     } catch(e) {
       logger.error('circleci circleProjectBuilds circleRequest', e)
       return []
@@ -120,16 +123,14 @@ module.exports = function(injections) {
 
   async function circleBuildArtifacts(project, build) {
     // Fetch build artifact list from the store
-    let storeKey = `circleci/${project}-artifacts/${build.id}`
+    let cacheKey = join('artifacts', project, build.id)
+    let storeKey = join('circleci', `${project}-artifacts`, build.id)
     let artifacts = await store.getItem(storeKey)
 
     if (!artifacts) {
       // Artifacts unknown, fetch them from circleci
       let url = `/project/${project.replace(/:/g, '/')}/${build.id}/artifacts`
-      let response = await circleRequest(
-        `artifacts/${project}/${build.id}`,
-        url
-      )
+      let response = await circleRequest(cacheKey, url)
 
       if (response.status >= 400) {
         logger.error(
@@ -149,9 +150,11 @@ module.exports = function(injections) {
   }
 
   async function circleDownload(url) {
-    let storeKey = `circleci/downloads/${url
-      .replace('https://', '')
-      .replace(/\//g, '_')}`
+    let storeKey = join(
+      'circleci',
+      'downloads',
+      url.replace('https://', '').replace(/\//g, '_')
+    )
 
     let data = await store.getItem(storeKey)
     if (!data) {

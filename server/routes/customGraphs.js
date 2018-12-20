@@ -1,6 +1,8 @@
 /* eslint-env node */
 'use strict'
 
+const { join } = require('path')
+
 function createCustomGraph(id, payload) {
   return {
     id,
@@ -16,7 +18,7 @@ function createCustomGraph(id, payload) {
 }
 
 function keyFor(project) {
-  return `custom-graphs/${project}`
+  return join('custom-graphs', project)
 }
 
 module.exports = function(injections, app, routePrefix) {

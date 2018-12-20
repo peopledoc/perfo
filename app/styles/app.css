@@ -74,3 +74,10 @@ nav a:hover {
 .accordion > .card > .card-header {
   padding: 0;
 }
+
+input.form-control {
+  font-size: 0.9rem;
+  padding: 0 0 0 8px;
+  height: initial;
+  min-height: 2em;
+}

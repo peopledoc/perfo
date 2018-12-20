@@ -9,6 +9,10 @@ module.exports = function(defaults) {
       importBootstrapFont: false,
       importBootstrapCSS: true,
       whitelist: ['bs-accordion', 'bs-button', 'bs-button-group', 'bs-form']
+    },
+
+    'ember-power-select': {
+      theme: 'bootstrap'
     }
   })
 

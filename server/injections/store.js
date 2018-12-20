@@ -27,7 +27,7 @@ module.exports = function(injections) {
   } = injections
 
   function pathFor(key) {
-    return `${join(dataDir, key)}.json`
+    return `${join(dataDir, 'store', key)}.json`
   }
 
   async function ensureDir(dir) {

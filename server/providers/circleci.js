@@ -36,8 +36,6 @@ module.exports = function(injections) {
     let projectBuilds = (await store.getItem(storeKey)) || []
     let existingBuilds = projectBuilds.map((build) => build.id)
 
-    logger.debug('circleCIBuilds minDate', minDate)
-
     try {
       response = await circleRequest(
         `${project.replace(/:/g, '.')}/builds-${branch}`,

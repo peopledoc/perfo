@@ -9,7 +9,7 @@ const {
   unlink: unlinkAsync,
   writeFile: writeFileAsync
 } = require('fs')
-const { dirname, join } = require('path')
+const { dirname, join, resolve } = require('path')
 
 const [mkdir, readdir, readFile, rmdir, unlink, writeFile] = [
   mkdirAsync,
@@ -26,8 +26,15 @@ module.exports = function(injections) {
     logger
   } = injections
 
+  let storeDir = resolve(dataDir)
+
   function pathFor(key) {
-    return `${join(dataDir, 'store', key)}.json`
+    let path = resolve(`${join(storeDir, key)}.json`)
+    if (!path.startsWith(storeDir)) {
+      throw new Error(`Insecure store key: ${key}`)
+    }
+
+    return path
   }
 
   async function ensureDir(dir) {
@@ -54,7 +61,7 @@ module.exports = function(injections) {
     }
 
     let currentPath = path
-    while (currentPath.startsWith(dataDir) && currentPath !== dataDir) {
+    while (currentPath.startsWith(storeDir) && currentPath !== storeDir) {
       currentPath = dirname(currentPath)
 
       let siblings

@@ -1,5 +1,5 @@
 {{#if isEditing}}
-  {{#custom-graph-form model=editingData submitLabel='Save' submitAction=(action 'saveCustomGraph' graph)}}
+  {{#custom-graph-form model=editingData jobNames=jobNames submitLabel='Save' submitAction=(action 'saveCustomGraph' graph)}}
     {{#bs-button type="secondary" onClick=(action "toggleEditCustomGraph" graph)}}Cancel{{/bs-button}}
     {{graph-controls/-buttons graph=graph graphChangedAction=graphChangedAction}}
   {{/custom-graph-form}}

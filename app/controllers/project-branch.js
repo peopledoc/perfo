@@ -33,6 +33,9 @@ export default Controller.extend({
       })
       : Promise.resolve([])
   }),
+  projectJobNames: computed('projectBuilds', function() {
+    return [...new Set(this.projectBuilds.map((build) => build.job))].sort()
+  }),
 
   buildsSorting: Object.freeze(['start']),
   sortedBuilds: sort('projectBuilds', 'buildsSorting'),

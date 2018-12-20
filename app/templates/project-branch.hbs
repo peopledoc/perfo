@@ -21,7 +21,7 @@
 
           {{#item.body}}
             {{custom-graph project=project branch=branch graph=graph}}
-            {{graph-controls graph=graph graphChangedAction=(action 'graphChanged')}}
+            {{graph-controls graph=graph jobNames=projectJobNames graphChangedAction=(action 'graphChanged')}}
           {{/item.body}}
         {{/acc.item}}
       {{/each}}
@@ -33,7 +33,7 @@
       {{/if}}
       <div class="card-body">
         {{#if isAddingCustomGraph}}
-          {{#custom-graph-form submitLabel='Add' model=newCustomGraph submitAction=(action 'addCustomGraph')}}
+          {{#custom-graph-form submitLabel='Add' model=newCustomGraph jobNames=projectJobNames submitAction=(action 'addCustomGraph')}}
             {{#bs-button type="secondary" onClick=(action 'toggleAddCustomGraph')}}Cancel{{/bs-button}}
           {{/custom-graph-form}}
         {{else}}

@@ -41,7 +41,7 @@ export default ApplicationAdapter.extend({
     return this._urlForProjectGraph(snapshot.record.project, id)
   },
 
-  urlForUdpdateRecord(id, modelName, snapshot) {
+  urlForUpdateRecord(id, modelName, snapshot) {
     if (!('project' in snapshot.record)) {
       throw new Error(
         'urlForUdpdateRecord called on adapter:custom-graph without a `project` in the snapshot record'

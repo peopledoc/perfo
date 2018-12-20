@@ -33,7 +33,7 @@ export default Controller.extend({
       })
       : Promise.resolve([])
   }),
-  projectJobNames: computed('projectBuilds', function() {
+  projectJobNames: computed('projectBuilds.@each', function() {
     return [...new Set(this.projectBuilds.map((build) => build.job))].sort()
   }),
 

@@ -127,7 +127,7 @@ additional keys than those specified below, but to ensure there are no name
 clashes with properties that may be added later to the provider API, you must
 prefix any "private" property with an underscore.
 
-*`async info()`: return information about the provider.*
+**`async info()`: return information about the provider.**
 
 Must return an object with the following keys:
 
@@ -137,7 +137,7 @@ Must return an object with the following keys:
 * `icon` (optional): URL for an icon to display for the provider
 * `name`: a human-readable name for the data source
 
-*`async projects()`: return the list of projects available*
+**`async projects()`: return the list of projects available**
 
 Must return an array of project objects, with the following keys:
 
@@ -145,8 +145,8 @@ Must return an array of project objects, with the following keys:
 * `name`: a human-readable name for the project
 * `branches`: an array of branch names for the project
 
-*`async builds(project, branch)`: return the list of available builds for a
-branch of a project*
+**`async builds(project, branch)`: return the list of available builds for a
+branch of a project**
 
 Parameters:
 
@@ -162,8 +162,8 @@ Must return an array of build objects, with the following keys:
 * `subject`: the subject of this specific build (eg. a commit message)
 * `revision`: the VCS revision for this specific build (eg. a commit SHA-1)
 
-*`async customGraphData(project, branch, jobName, artifactMatches)`: return a
-list of datasets to draw a custom graph for a branch of a project*
+**`async customGraphData(project, branch, jobName, artifactMatches)`: return a
+list of datasets to draw a custom graph for a branch of a project**
 
 Parameters:
 
@@ -189,14 +189,14 @@ Provider factories will receive an `injections` object as their first parameter.
 This object contains various services that providers may want to use, most
 notably the following:
 
-*`config`: configuration data*
+**`config`: configuration data**
 
 Contains the following keys:
 
 * `orgFilter`: organization filter to filter the project list
 * `maxBuildAge`: maximum age in milliseconds of project builds to consider
 
-*`async cache(key, async getter())`: get data from the server cache*
+**`async cache(key, async getter())`: get data from the server cache**
 
 Looks for a cached value with `key` as a key, and return it.
 
@@ -206,7 +206,7 @@ provider name.  Use `path.join()` to build keys with several parts.
 If the key is not available or the cache has expired, `getter()` will be called
 and its return value will be stored in the cache and returned.
 
-*`store`: local filesystem-backed data store*
+**`store`: local filesystem-backed data store**
 
 Stores data on the filesystem in a directory structure as JSON files.  Any data
 you store should be JSON-serializable.
@@ -222,7 +222,7 @@ The store has the following methods:
 * `async delItem(key)`: remove an item from the store
 * `async keys(path = '')`: list all keys in the store in a given path
 
-*`logger`: very simple logging facility*
+**`logger`: very simple logging facility**
 
 Has the following methods:
 

@@ -17,8 +17,9 @@ module.exports = function(app) {
   app.use(compression())
   app.use(bodyParser.json())
 
-  routes.projects(injections, app, `${rootURL}projects`)
-  routes.customGraphs(injections, app, `${rootURL}projects/:project/graphs`)
+  routes.providers(injections, app, `${rootURL}api/providers`)
+  routes.projects(injections, app, `${rootURL}api/projects`)
+  routes.customGraphs(injections, app, `${rootURL}api/projects/:project/graphs`)
 
   app.use((err, req, res, next) => {
     logger.error('express error catching', err)

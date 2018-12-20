@@ -23,6 +23,9 @@ export default ApplicationAdapter.extend({
     delete query.branch
     delete query.customGraph
 
-    return `/projects/${project}/graphs/${customGraph}/${branch}`
+    let graphURL = this.store
+      .adapterFor('custom-graph')
+      ._urlForProjectGraph(project, customGraph)
+    return `${graphURL}/${branch}`
   }
 })

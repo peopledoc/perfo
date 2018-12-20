@@ -5,11 +5,6 @@ module.exports = function(injections, app, routePrefix) {
   let { asyncHandler, ci } = injections
 
   app.get(
-    `${routePrefix}/providers`,
-    asyncHandler(async(req, res) => res.json(await ci.providers()))
-  )
-
-  app.get(
     `${routePrefix}`,
     asyncHandler(async(req, res) => {
       res.json(await ci.projects())

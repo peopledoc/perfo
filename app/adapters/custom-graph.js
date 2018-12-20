@@ -2,7 +2,10 @@ import ApplicationAdapter from './application'
 
 export default ApplicationAdapter.extend({
   _urlForProjectGraphs(project) {
-    return `/projects/${project}/graphs`
+    let projectURL = this.store
+      .adapterFor('project')
+      .urlForFindRecord(project, 'project')
+    return `${projectURL}/graphs`
   },
 
   _urlForProjectGraph(project, id) {

@@ -17,6 +17,9 @@ export default ApplicationAdapter.extend({
     delete query.project
     delete query.branch
 
-    return `/projects/${project}/builds/${branch}`
+    let projectURL = this.store
+      .adapterFor('project')
+      .urlForFindRecord(project, 'project')
+    return `${projectURL}/builds/${branch}`
   }
 })

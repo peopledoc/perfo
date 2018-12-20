@@ -1,5 +1,5 @@
 import { computed } from '@ember/object'
-import { readOnly } from '@ember/object/computed'
+import { not, readOnly } from '@ember/object/computed'
 import { inject as service } from '@ember/service'
 import LineGraph from 'perfo/components/line-graph'
 import {
@@ -43,6 +43,7 @@ export default LineGraph.extend({
     }
   }),
 
+  isLoadingData: not('dataSets.isSettled'),
   dataSets: computed(
     'project.id',
     'branch',

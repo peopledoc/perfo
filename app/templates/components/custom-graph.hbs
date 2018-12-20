@@ -1,1 +1,5 @@
-{{line-graph chartData=chartData showLegend=showLegend graphType=graphType valueTitle=valueTitle valueFormatter=valueFormatter}}
+{{#if isLoadingData}}
+  Loading artifact data for {{project.name}} on {{branch}}, this may take a little while...
+{{else}}
+  {{line-graph chartData=chartData showLegend=showLegend graphType=graphType valueTitle=valueTitle valueFormatter=valueFormatter}}
+{{/if}}

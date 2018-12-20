@@ -1,45 +1,45 @@
 {{#if project}}
-  {{#if isLoadingBuilds}}
-    Loading build data...
-  {{else}}
-    {{#bs-accordion selected=accordionSelectedItem as |acc|}}
-      {{#acc.item value='main' as |item|}}
+  {{#bs-accordion selected=accordionSelectedItem as |acc|}}
+    {{#acc.item value='main' as |item|}}
+      {{#item.title}}
+        Build durations
+      {{/item.title}}
+
+      {{#item.body}}
+        {{#if isLoadingBuilds}}
+          Loading project builds for {{project.name}} on {{branch}}, this may take a little while...
+        {{else}}
+          {{ci-perf-graph projectBuilds=sortedBuilds title=mainGraphTitle}}
+        {{/if}}
+      {{/item.body}}
+    {{/acc.item}}
+
+    {{#each sortedCustomGraphs as |graph|}}
+      {{#acc.item value=(concat 'graph-' graph.order) as |item|}}
         {{#item.title}}
-          Build durations
+          {{graph.title}}
         {{/item.title}}
 
         {{#item.body}}
-          {{ci-perf-graph projectBuilds=sortedBuilds title=mainGraphTitle}}
+          {{custom-graph project=project branch=branch graph=graph}}
+          {{graph-controls graph=graph jobNames=projectJobNames graphChangedAction=(action 'graphChanged')}}
         {{/item.body}}
       {{/acc.item}}
+    {{/each}}
+  {{/bs-accordion}}
 
-      {{#each sortedCustomGraphs as |graph|}}
-        {{#acc.item value=(concat 'graph-' graph.order) as |item|}}
-          {{#item.title}}
-            {{graph.title}}
-          {{/item.title}}
-
-          {{#item.body}}
-            {{custom-graph project=project branch=branch graph=graph}}
-            {{graph-controls graph=graph jobNames=projectJobNames graphChangedAction=(action 'graphChanged')}}
-          {{/item.body}}
-        {{/acc.item}}
-      {{/each}}
-    {{/bs-accordion}}
-
-    <div class="card bg-light mt-3">
+  <div class="card bg-light mt-3">
+    {{#if isAddingCustomGraph}}
+      <div class="card-header">New custom graph</div>
+    {{/if}}
+    <div class="card-body">
       {{#if isAddingCustomGraph}}
-        <div class="card-header">New custom graph</div>
+        {{#custom-graph-form submitLabel='Add' model=newCustomGraph jobNames=projectJobNames submitAction=(action 'addCustomGraph')}}
+          {{#bs-button type="secondary" onClick=(action 'toggleAddCustomGraph')}}Cancel{{/bs-button}}
+        {{/custom-graph-form}}
+      {{else}}
+        {{#bs-button type="primary" onClick=(action 'toggleAddCustomGraph')}}Add custom graph{{/bs-button}}
       {{/if}}
-      <div class="card-body">
-        {{#if isAddingCustomGraph}}
-          {{#custom-graph-form submitLabel='Add' model=newCustomGraph jobNames=projectJobNames submitAction=(action 'addCustomGraph')}}
-            {{#bs-button type="secondary" onClick=(action 'toggleAddCustomGraph')}}Cancel{{/bs-button}}
-          {{/custom-graph-form}}
-        {{else}}
-          {{#bs-button type="primary" onClick=(action 'toggleAddCustomGraph')}}Add custom graph{{/bs-button}}
-        {{/if}}
-      </div>
     </div>
-  {{/if}}
+  </div>
 {{/if}}

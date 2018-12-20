@@ -9,5 +9,6 @@ export default Model.extend({
   branchMatches: attr(),
   order: attr(),
   showLegend: attr('boolean'),
+  graphType: attr(),
   formatter: attr()
 })

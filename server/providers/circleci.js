@@ -29,12 +29,14 @@ module.exports = function(injections) {
 
   async function circleProjectBuilds(project, branch) {
     let storeKey = `circleci/${project}-${branch}`
-    let minDate = Date.now() - maxBuildAge
+    let minDate = new Date(Date.now() - maxBuildAge).toISOString()
     let url = `/project/${project.replace(/:/g, '/')}/tree/${branch}`
     let response
 
     let projectBuilds = (await store.getItem(storeKey)) || []
     let existingBuilds = projectBuilds.map((build) => build.id)
+
+    logger.debug('circleCIBuilds minDate', minDate)
 
     try {
       response = await circleRequest(
@@ -52,7 +54,7 @@ module.exports = function(injections) {
               pageItems.some(
                 (build) =>
                   existingBuilds.indexOf(build.build_num) !== -1
-                  || new Date(build.start_time).getTime() < minDate
+                  || build.start_time < minDate
               )
           })
         }
@@ -102,9 +104,18 @@ module.exports = function(injections) {
     }
 
     // Exclude builds that are too old and save the rest
-    projectBuilds = projectBuilds.filter(
-      (build) => new Date(build.start).getTime() > minDate
-    )
+    projectBuilds = projectBuilds
+      .filter((build) => build.start >= minDate)
+      .sort((a, b) => {
+        if (a.start < b.start) {
+          return -1
+        } else if (a.start > b.start) {
+          return 1
+        } else {
+          return 0
+        }
+      })
+
     await store.setItem(storeKey, projectBuilds)
     return projectBuilds
   }

@@ -10,7 +10,8 @@ function createCustomGraph(id, payload) {
     branchMatches: payload.branchMatches,
     order: payload.order,
     showLegend: !!payload.showLegend,
-    formatter: payload.formatter
+    formatter: payload.formatter,
+    graphType: payload.graphType
   }
 }
 
@@ -22,8 +23,7 @@ module.exports = function(injections, app, routePrefix) {
   let {
     asyncHandler,
     store: { getItem, setItem },
-    ci,
-    logger
+    ci
   } = injections
 
   app.get(

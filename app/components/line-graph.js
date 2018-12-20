@@ -2,7 +2,7 @@ import Component from '@ember/component'
 import { computed } from '@ember/object'
 
 export default Component.extend({
-  graphType: 'spline',
+  graphType: 'line',
   showLegend: true,
 
   valueTitle: 'Value',
@@ -11,30 +11,36 @@ export default Component.extend({
   chartOptions: computed(
     'graphType',
     'showLegend',
-    'title',
     'valueTitle',
     'valueFormatter',
     function() {
-      let { valueFormatter } = this
+      let { graphType, showLegend, valueFormatter, valueTitle } = this
+      let graphOptions = {
+        lineWidth: 1,
+        marker: {
+          enabled: true,
+          radius: 2
+        }
+      }
+      let plotOptions = {}
+
+      if (graphType === 'stacked') {
+        graphType = 'area'
+        graphOptions.stacking = 'normal'
+      }
+
+      plotOptions[graphType] = graphOptions
 
       return {
         chart: {
           height: '600px',
-          type: this.graphType,
+          type: graphType,
           zoomType: 'xy'
         },
         legend: {
-          enabled: this.showLegend
+          enabled: showLegend
         },
-        plotOptions: {
-          spline: {
-            lineWidth: 1,
-            marker: {
-              enabled: true,
-              radius: 2
-            }
-          }
-        },
+        plotOptions,
         title: {
           text: ''
         },
@@ -52,9 +58,9 @@ export default Component.extend({
         xAxis: { type: 'datetime', title: { text: 'Date' } },
         yAxis: {
           labels: {
-            formatter: (data) => this.valueFormatter(data.value)
+            formatter: (data) => valueFormatter(data.value)
           },
-          title: { text: this.valueTitle }
+          title: { text: valueTitle }
         }
       }
     }

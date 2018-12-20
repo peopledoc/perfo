@@ -49,13 +49,10 @@ export default Controller.extend({
           'newCustomGraph',
           this.store.createRecord('custom-graph', {
             project: this.project.id,
-            title: '',
-            jobName: '',
-            artifactMatches: '',
-            branchMatches: '',
             order: 0,
             showLegend: true,
-            formatter: 'none'
+            formatter: 'none',
+            graphType: 'line'
           })
         )
       }

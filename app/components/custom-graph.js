@@ -17,6 +17,7 @@ export default LineGraph.extend({
 
   jobName: readOnly('graph.jobName'),
   showLegend: readOnly('graph.showLegend'),
+  graphType: readOnly('graph.graphType'),
 
   valueTitle: computed('graph.formatter', function() {
     if (
@@ -42,10 +43,10 @@ export default LineGraph.extend({
     }
   }),
 
-  dataArtifacts: computed(
+  dataSets: computed(
     'project.id',
     'branch',
-    'graph.{id,artifactMatches}',
+    'graph.{id,jobName,artifactMatches}',
     function() {
       return this.store.query('dataset', {
         project: this.project.id,
@@ -55,31 +56,32 @@ export default LineGraph.extend({
     }
   ),
 
-  chartData: computed('dataArtifacts.@each', function() {
+  chartData: computed('dataSets.@each', function() {
     // Extract list of unique labels from all artifacts
     let seriesNames = [
       ...new Set(
-        this.dataArtifacts.reduce(function(seriesNames, set) {
+        this.dataSets.reduce(function(seriesNames, set) {
           return seriesNames.concat(set.points.map((point) => point.label))
         }, [])
       )
     ]
+
+    // Extract timestamps and index datasets by date
+    let timestamps = this.dataSets.map((set) => set.date)
+    let dataSets = this.dataSets.reduce((dataSets, set) => {
+      dataSets[set.date] = set.points
+      return dataSets
+    }, {})
 
     // Build one series for each unique label with all data points with that
     // label from all artifacts
     return seriesNames.map((name) => {
       return {
         name,
-        data: this.dataArtifacts
-          // filter out artifacts without a point with that label
-          .filter((set) => set.points.find((point) => point.label === name))
-          // Generate data points
-          .map((set) => {
-            return {
-              x: set.date,
-              y: set.points.find((point) => point.label === name).value
-            }
-          })
+        data: timestamps.map((timestamp) => {
+          let point = dataSets[timestamp].find((point) => point.label === name)
+          return { x: timestamp, y: point ? point.value : 0 }
+        })
       }
     })
   })

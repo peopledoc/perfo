@@ -23,6 +23,20 @@
     </div>
   {{/form.element}}
 
+  {{#form.element label="Graph type" property="graphType" as |el|}}
+    <div class="input-group">
+      {{#bs-button-group
+        value=el.value
+        id=el.id
+        type="radio"
+        onChange=(action (mut el.value)) as |bg|}}
+        {{#bg.button value='line'}}Line{{/bg.button}}
+        {{#bg.button value='spline'}}Smooth line{{/bg.button}}
+        {{#bg.button value='stacked'}}Stacked area{{/bg.button}}
+      {{/bs-button-group}}
+    </div>
+  {{/form.element}}
+
   {{form.element controlType="checkbox" label="Show graph legend" property="showLegend"}}
 
   {{bs-button defaultText=submitLabel type="primary" buttonType="submit"}}

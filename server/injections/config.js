@@ -25,7 +25,7 @@ module.exports = function() {
   let maxBuildAge = Number(PERFO_MAX_BUILD_AGE) || 3 * MONTH
 
   return {
-    rootURL: PERFO_ROOT_URL,
+    rootURL: PERFO_ROOT_URL || '/',
     orgFilter: PERFO_ORG_FILTER,
     circleToken: PERFO_CIRCLECI_TOKEN,
     logFormat,

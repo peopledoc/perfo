@@ -4,12 +4,16 @@ export function sizeFormatter(bytes) {
   let prefixIndex = 0
   let size = bytes
 
+  if (size === 0) {
+    return '0 B'
+  }
+
   while (prefixIndex < sizePrefixes.length && size > 1024) {
     prefixIndex++
     size /= 1024
   }
 
-  return `${Math.floor(size)} ${sizePrefixes[prefixIndex]}B`
+  return `${size.toPrecision(3)} ${sizePrefixes[prefixIndex]}B`
 }
 
 export function secondsFormatter(seconds) {

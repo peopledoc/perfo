@@ -226,10 +226,19 @@ module.exports = function(injections) {
           (project) => (orgFilter ? project.username === orgFilter : true)
         )
         .map((project) => {
+          let branches = Object.keys(project.branches)
+            .map((branch) => decodeURIComponent(branch))
+            .sort()
+          let masterIndex = branches.indexOf('master')
+          if (masterIndex !== -1) {
+            branches.splice(masterIndex, 1)
+            branches.unshift('master')
+          }
+
           return {
             id: `${project.vcs_type}:${project.username}:${project.reponame}`,
             name: `${project.reponame}`,
-            branches: Object.keys(project.branches)
+            branches
           }
         })
     },

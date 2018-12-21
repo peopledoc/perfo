@@ -20,6 +20,6 @@ export default ApplicationAdapter.extend({
     let projectURL = this.store
       .adapterFor('project')
       .urlForFindRecord(project, 'project')
-    return `${projectURL}/builds/${branch}`
+    return `${projectURL}/builds/${encodeURIComponent(branch)}`
   }
 })

@@ -26,6 +26,6 @@ export default ApplicationAdapter.extend({
     let graphURL = this.store
       .adapterFor('custom-graph')
       ._urlForProjectGraph(project, customGraph)
-    return `${graphURL}/${branch}`
+    return `${graphURL}/${encodeURIComponent(branch)}`
   }
 })

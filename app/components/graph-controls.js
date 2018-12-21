@@ -6,6 +6,8 @@ import { inject as service } from '@ember/service'
 export default Component.extend({
   store: service(),
 
+  classNames: ['graph-controls'],
+
   graph: null,
   graphChangedAction: null,
 

@@ -1,9 +1,9 @@
 {{#if isEditing}}
   {{#custom-graph-form model=editingData jobNames=jobNames submitLabel='Save' submitAction=(action 'saveCustomGraph' graph)}}
-    {{#bs-button type="secondary" onClick=(action "toggleEditCustomGraph" graph)}}Cancel{{/bs-button}}
+    {{#bs-button size="sm" type="secondary" onClick=(action "toggleEditCustomGraph" graph)}}Cancel{{/bs-button}}
     {{graph-controls/-buttons graph=graph graphChangedAction=graphChangedAction}}
   {{/custom-graph-form}}
 {{else}}
-  {{#bs-button type="primary" onClick=(action "toggleEditCustomGraph" graph)}}Edit{{/bs-button}}
+  {{#bs-button size="sm" type="primary" onClick=(action "toggleEditCustomGraph" graph)}}Edit{{/bs-button}}
   {{graph-controls/-buttons graph=graph graphChangedAction=graphChangedAction}}
 {{/if}}

@@ -7,50 +7,20 @@ body {
   font-size: 0.9rem;
 }
 
-h1 {
-  margin: 0;
-  padding: 1rem;
-  font-size: 1.2rem;
-  font-variant: small-caps;
-  background-color: #333;
-  color: #ddd;
-}
-
-h1 img {
-  height: 2rem;
-  margin-right: 1rem;
-  vertical-align: middle;
-}
-
 nav {
-  margin: 0 0 1rem 0;
   padding: 0;
-  background-color: #555;
-  color: #ddd;
+  background-color: #eee;
+  color: #555;
 
   display: flex;
   flex-flow: row nowrap;
-}
-
-nav .ember-power-select-trigger {
-  color: initial;
-}
-
-nav a:link,
-nav a:visited,
-nav a:active {
-  color: #fd3;
-  text-decoration: none;
-}
-
-nav a:hover {
-  text-decoration: underline;
+  align-items: baseline;
 }
 
 .nav-project,
 .nav-branch,
 .nav-providers {
-  padding: 1rem;
+  padding: 0.5rem;
   flex-grow: 1;
 }
 
@@ -58,21 +28,38 @@ nav a:hover {
   max-height: 1rem;
 }
 
-.provider:before {
-  content: '●';
-  color: #f33;
+.collapsible.expanded {
+  margin-bottom: 0.5rem;
 }
 
-.provider.provider-connected:before {
-  color: #3f3;
+.collapsible-title {
+  background-color: #eee;
+  color: #555;
+  font-weight: bold;
+  padding: 0.5rem;
+  transition: all 0.25s;
 }
 
-.main {
-  margin: 1rem;
+.collapsible-caret {
+  display: inline-block;
+  margin: 0 0.5rem;
+  transition: all 0.25s;
 }
 
-.accordion > .card > .card-header {
-  padding: 0;
+.collapsible-content {
+  margin: 0 0.5rem;
+}
+
+.collapsible.expanded .collapsible-caret {
+  transform: rotate(90deg);
+}
+
+.collapsible.expanded .collapsible-title {
+  margin-bottom: 0.5rem;
+}
+
+.graph-controls {
+  margin: 0 1rem;
 }
 
 input.form-control {

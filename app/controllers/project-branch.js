@@ -65,17 +65,10 @@ export default Controller.extend({
       this.newCustomGraph.save().then(() => {
         this.set('newCustomGraph', null)
         this.notifyPropertyChange('customGraphs')
-        this.set('accordionSelectedItem', `graph-${newOrder}`)
       })
     },
 
-    graphChanged(action, graph) {
-      if (action === 'moved') {
-        this.set('accordionSelectedItem', `graph-${graph.order}`)
-      } else if (action === 'deleted') {
-        this.set('accordionSelectedItem', 'main')
-      }
-
+    graphChanged() {
       this.notifyPropertyChange('customGraphs')
     }
   }

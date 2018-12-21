@@ -15,10 +15,10 @@
         id=el.id
         type="radio"
         onChange=(action (mut el.value)) as |bg|}}
-        {{#bg.button value='none'}}None{{/bg.button}}
-        {{#bg.button value='duration_sec'}}Duration (seconds){{/bg.button}}
-        {{#bg.button value='duration_ms'}}Duration (milliseconds){{/bg.button}}
-        {{#bg.button value='size'}}Size{{/bg.button}}
+        {{#bg.button size="sm" value='none'}}None{{/bg.button}}
+        {{#bg.button size="sm" value='duration_sec'}}Duration (seconds){{/bg.button}}
+        {{#bg.button size="sm" value='duration_ms'}}Duration (milliseconds){{/bg.button}}
+        {{#bg.button size="sm" value='size'}}Size{{/bg.button}}
       {{/bs-button-group}}
     </div>
   {{/form.element}}
@@ -30,15 +30,15 @@
         id=el.id
         type="radio"
         onChange=(action (mut el.value)) as |bg|}}
-        {{#bg.button value='line'}}Line{{/bg.button}}
-        {{#bg.button value='spline'}}Smooth line{{/bg.button}}
-        {{#bg.button value='stacked'}}Stacked area{{/bg.button}}
+        {{#bg.button size="sm" value='line'}}Line{{/bg.button}}
+        {{#bg.button size="sm" value='spline'}}Smooth line{{/bg.button}}
+        {{#bg.button size="sm" value='stacked'}}Stacked area{{/bg.button}}
       {{/bs-button-group}}
     </div>
   {{/form.element}}
 
   {{form.element controlType="checkbox" label="Show graph legend" property="showLegend"}}
 
-  {{bs-button defaultText=submitLabel type="primary" buttonType="submit"}}
+  {{bs-button size="sm" defaultText=submitLabel type="primary" buttonType="submit"}}
   {{yield}}
 {{/bs-form}}

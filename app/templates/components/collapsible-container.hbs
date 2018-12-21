@@ -1,0 +1,10 @@
+<div class="collapsible-title" {{action (mut isCollapsed) (not isCollapsed) on="click"}}>
+  <span class="collapsible-caret">►</span>
+  {{title}}
+</div>
+
+{{#bs-collapse collapsed=isCollapsed}}
+  <div class="collapsible-content">
+    {{yield}}
+  </div>
+{{/bs-collapse}}

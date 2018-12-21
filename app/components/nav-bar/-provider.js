@@ -6,8 +6,8 @@ export default Component.extend({
 
   tagName: 'span',
   attributeBindings: computed(() => ['title']),
-  classNames: ['provider'],
-  classNameBindings: ['provider.connected:provider-connected'],
+  classNames: ['badge'],
+  classNameBindings: ['provider.connected:badge-success:badge-danger'],
   title: computed('provider.{name,connected,account}', function() {
     let { name, connected, account } = this.provider
     if (connected) {

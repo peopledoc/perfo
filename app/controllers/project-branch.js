@@ -1,6 +1,6 @@
 import Controller from '@ember/controller'
 import { computed } from '@ember/object'
-import { readOnly, not, notEmpty, sort } from '@ember/object/computed'
+import { readOnly, not, sort } from '@ember/object/computed'
 import { inject as service } from '@ember/service'
 
 export default Controller.extend({
@@ -12,8 +12,9 @@ export default Controller.extend({
 
   accordionSelectedItem: 'main',
 
-  isAddingCustomGraph: notEmpty('newCustomGraph'),
+  isAddingCustomGraph: false,
   newCustomGraph: null,
+
   customGraphs: computed('project', function() {
     return this.store.query('custom-graph', {
       project: this.project.id
@@ -41,21 +42,19 @@ export default Controller.extend({
   sortedBuilds: sort('projectBuilds', 'buildsSorting'),
 
   actions: {
-    toggleAddCustomGraph() {
-      if (this.newCustomGraph) {
-        this.set('newCustomGraph', null)
-      } else {
-        this.set(
-          'newCustomGraph',
-          this.store.createRecord('custom-graph', {
+    toggleAddCustomGraph(isCollapsed) {
+      this.set(
+        'newCustomGraph',
+        isCollapsed
+          ? null
+          : this.store.createRecord('custom-graph', {
             project: this.project.id,
             order: 0,
             showLegend: true,
             formatter: 'none',
             graphType: 'line'
           })
-        )
-      }
+      )
     },
 
     addCustomGraph() {
@@ -64,6 +63,7 @@ export default Controller.extend({
       this.newCustomGraph.set('order', newOrder)
       this.newCustomGraph.save().then(() => {
         this.set('newCustomGraph', null)
+        this.set('isAddingCustomGraph', false)
         this.notifyPropertyChange('customGraphs')
       })
     },

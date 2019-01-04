@@ -4,7 +4,7 @@
 
 {{#bs-form formLayout='horizontal' model=model onSubmit=(action 'submit') as |form|}}
   {{form.element controlType="text" label="Graph title" property="title" required=true}}
-  {{form.element controlType="power-select" label="CI job name" property="jobName" required=true options=jobNames}}
+  {{form.element controlType="text" label="CI job name" property="jobName" required=true helpText=jobHelpText}}
   {{form.element controlType="text" label="Artifact path" property="artifactMatches" required=true helpText="Regular expression that matches an artifact with data for the graph.  It must be a JSON array of objects with keys `label` and `value`."}}
   {{form.element controlType="text" label="Branches" property="branchMatches" helpText="Regular expression that matches branches where this graph is relevant.  Leave empty to match all branches."}}
 

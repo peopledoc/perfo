@@ -12,7 +12,7 @@ export default Controller.extend({
 
   accordionSelectedItem: 'main',
 
-  isAddingCustomGraph: false,
+  isAddFormCollapsed: true,
   newCustomGraph: null,
 
   customGraphs: computed('project', function() {
@@ -57,13 +57,16 @@ export default Controller.extend({
       )
     },
 
+    cancelAddCustomGraph() {
+      this.setProperties({ newCustomGraph: null, isAddFormCollapsed: true })
+    },
+
     addCustomGraph() {
       let newOrder
         = this.maxCustomGraphOrder >= 0 ? this.maxCustomGraphOrder + 1 : 0
       this.newCustomGraph.set('order', newOrder)
       this.newCustomGraph.save().then(() => {
-        this.set('newCustomGraph', null)
-        this.set('isAddingCustomGraph', false)
+        this.setProperties({ newCustomGraph: null, isAddFormCollapsed: true })
         this.notifyPropertyChange('customGraphs')
       })
     },

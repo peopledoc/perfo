@@ -14,9 +14,9 @@
     {{/collapsible-container}}
   {{/each}}
 
-  {{#collapsible-container title=(if isAddingCustomGraph "New custom graph" "Add custom graph") isCollapsed=(not isAddingCustomGraph) onToggle=(action 'toggleAddCustomGraph')}}
+  {{#collapsible-container title=(if isAddingCustomGraph "New custom graph" "Add custom graph") isCollapsed=isAddFormCollapsed onToggle=(action 'toggleAddCustomGraph')}}
     {{#custom-graph-form submitLabel='Add' model=newCustomGraph jobNames=projectJobNames submitAction=(action 'addCustomGraph')}}
-      {{#bs-button size="sm" type="secondary" onClick=(action 'toggleAddCustomGraph')}}Cancel{{/bs-button}}
+      {{#bs-button size="sm" type="secondary" onClick=(action 'cancelAddCustomGraph')}}Cancel{{/bs-button}}
     {{/custom-graph-form}}
   {{/collapsible-container}}
 {{/if}}

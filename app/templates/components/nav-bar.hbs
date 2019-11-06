@@ -6,9 +6,9 @@
       {{#power-select
         selected=selectedProject
         options=sortedProjects
-        onchange=(action 'selectProject')
+        onchange=(action "selectProject")
         placeholder="Select a project..."
-        searchField='name'
+        searchField="name"
         as |project|
       }}
         {{nav-bar/-project project=project}}
@@ -21,7 +21,7 @@
       {{#power-select
         selected=selectedBranch
         options=selectedProject.branches
-        onchange=(action 'selectBranch')
+        onchange=(action "selectBranch")
         placeholder="Select a branch..."
         as |branch|
       }}

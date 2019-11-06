@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 
 let setupServer = require('./index')
 

@@ -2,7 +2,7 @@ defaults: &defaults
   docker:
     - image: circleci/node:10-browsers
       environment:
-        JOBS: 2
+        JOBS: 1
   working_directory: ~/perfo
 
 version: 2
@@ -23,15 +23,12 @@ jobs:
           at: .
       - restore_cache:
           keys:
-            - eaf-node10-v1-{{ checksum "yarn.lock" }}
-      - run:
-          name: Avoid hosts unknown for github
-          command: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+            - perfo-node10-v1-{{ checksum "yarn.lock" }}
       - run:
           name: Yarn Install
-          command: yarn install --non-interactive
+          command: yarn install --non-interactive --pure-lockfile
       - save_cache:
-          key: eaf-node10-v1-{{ checksum "yarn.lock" }}
+          key: perfo-node10-v1-{{ checksum "yarn.lock" }}
           paths:
             - ~/perfo/node_modules
       - persist_to_workspace:
@@ -44,9 +41,11 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: echo 'export PATH=~/perfo/node_modules/.bin:$PATH' >> $BASH_ENV
       - run:
-          name: Lint
+          name: Lint Handlebars
+          command: yarn lint:hbs
+      - run:
+          name: Lint JavaScript
           command: yarn lint:js
 
   test:
@@ -54,14 +53,13 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: echo 'export PATH=~/perfo/node_modules/.bin:$PATH' >> $BASH_ENV
       - run:
           name: Run Tests
           command: yarn test
 
 workflows:
   version: 2
-  test:
+  build_and_test:
     jobs:
       - checkout_code
       - install_dependencies:

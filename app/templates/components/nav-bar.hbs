@@ -3,15 +3,38 @@
     {{#if isLoadingProjects}}
       Loading project list...
     {{else}}
+<<<<<<< HEAD
       <PowerSelect @selected={{selectedProject}} @options={{sortedProjects}} @onChange={{action "selectProject"}} @placeholder="Select a project..." @searchField="name" as |project|>
         <NavBar::-Project @project={{project}} />
       </PowerSelect>
+=======
+      {{#power-select
+        selected=selectedProject
+        options=sortedProjects
+        onChange=(action "selectProject")
+        placeholder="Select a project..."
+        searchField="name"
+        as |project|
+      }}
+        {{nav-bar/-project project=project}}
+      {{/power-select}}
+>>>>>>> 553595f (build: update ember-bootstrap-power-select, ember-power-select)
     {{/if}}
   </section>
 
   <section class="nav-branch">
     {{#if selectedProject}}
+<<<<<<< HEAD
       <PowerSelect @selected={{selectedBranch}} @options={{selectedProject.branches}} @onChange={{action "selectBranch"}} @placeholder="Select a branch..." as |branch|>
+=======
+      {{#power-select
+        selected=selectedBranch
+        options=selectedProject.branches
+        onChange=(action "selectBranch")
+        placeholder="Select a branch..."
+        as |branch|
+      }}
+>>>>>>> 553595f (build: update ember-bootstrap-power-select, ember-power-select)
         {{branch}}
       </PowerSelect>
     {{/if}}

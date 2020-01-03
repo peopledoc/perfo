@@ -1,5 +1,6 @@
 import Component from '@ember/component'
 import { computed } from '@ember/object'
+import { computed as overridable } from 'ember-overridable-computed'
 
 export default Component.extend({
   model: null,
@@ -7,7 +8,7 @@ export default Component.extend({
   title: null,
   submitLabel: null,
   submitAction: null,
-  jobNames: computed(() => []),
+  jobNames: overridable(() => []),
 
   jobHelpText: computed('jobNames', function() {
     return this.jobNames.length

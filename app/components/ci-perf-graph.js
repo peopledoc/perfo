@@ -1,9 +1,10 @@
 import { computed } from '@ember/object'
 import LineGraph from 'perfo/components/line-graph'
 import { millisecondsFormatter } from 'perfo/utils/formatters'
+import { computed as overridable } from 'ember-overridable-computed'
 
 export default LineGraph.extend({
-  projectBuilds: computed(() => []),
+  projectBuilds: overridable(() => []),
 
   valueTitle: 'Duration',
   valueFormatter: millisecondsFormatter,

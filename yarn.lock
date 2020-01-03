@@ -7225,6 +7225,13 @@ ember-on-helper@^0.1.0:
   dependencies:
     ember-cli-babel "^7.7.3"
 
+ember-overridable-computed@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ember-overridable-computed/-/ember-overridable-computed-1.0.0.tgz#4fb4a5acc9ec9ed7421586a5a8b4014f5bdb04f7"
+  integrity sha512-0uuJZDEpq0LzNGQAtAf1PhcFVbkaHKd5ilT81k1aU4ZgCo5cwkxU65R5evokweq2dQwIaGTSs0MndCG+qI8BXA==
+  dependencies:
+    ember-cli-babel "^7.7.3"
+
 ember-popper@^0.10.3:
   version "0.10.3"
   resolved "https://registry.yarnpkg.com/ember-popper/-/ember-popper-0.10.3.tgz#222ecce35a6777364bec7ec293437f27a28713a1"

@@ -6,9 +6,31 @@ import hbs from 'htmlbars-inline-precompile'
 module('Integration | Component | custom-graph', function(hooks) {
   setupRenderingTest(hooks)
 
-  test('it renders', async function(assert) {
+  test('it renders a loading state', async function(assert) {
+    let mockStore = {
+      query() {
+        return new Promise(function() {})
+      }
+    }
+    this.set('mockStore', mockStore)
     this.set('graph', { formatter: null })
-    await render(hbs`{{custom-graph graph=graph}}`)
-    assert.ok(true, 'it renders')
+    this.set('project', { id: 123, name: 'project name' })
+    await render(hbs`{{custom-graph graph=graph project=project store=mockStore branch="branch_test"}}`)
+    assert.equal(this.element.textContent.trim(), 'Loading artifact data for project name on branch_test, this may take a little while...')
+  })
+
+  test('it renders a graph', async function(assert) {
+    let mockStore = {
+      query() {
+        return Promise.resolve({
+          points: []
+        })
+      }
+    }
+    this.set('mockStore', mockStore)
+    this.set('graph', { formatter: null })
+    this.set('project', { id: 123, name: 'project name' })
+    await render(hbs`{{custom-graph graph=graph project=project store=mockStore branch="branch_test"}}`)
+    assert.ok(true)
   })
 })

@@ -2,7 +2,7 @@
   <h4>{{title}}</h4>
 {{/if}}
 
-{{#bs-form formLayout='horizontal' model=model onSubmit=(action 'submit') as |form|}}
+{{#bs-form formLayout="horizontal" model=model onSubmit=(action "submit") as |form|}}
   {{form.element controlType="text" label="Graph title" property="title" required=true}}
   {{form.element controlType="power-select" label="CI job name" property="jobName" required=true options=jobNames}}
   {{form.element controlType="text" label="Artifact path" property="artifactMatches" required=true helpText="Regular expression that matches an artifact with data for the graph.  It must be a JSON array of objects with keys `label` and `value`."}}
@@ -15,10 +15,10 @@
         id=el.id
         type="radio"
         onChange=(action (mut el.value)) as |bg|}}
-        {{#bg.button size="sm" value='none'}}None{{/bg.button}}
-        {{#bg.button size="sm" value='duration_sec'}}Duration (seconds){{/bg.button}}
-        {{#bg.button size="sm" value='duration_ms'}}Duration (milliseconds){{/bg.button}}
-        {{#bg.button size="sm" value='size'}}Size{{/bg.button}}
+        {{#bg.button size="sm" value="none"}}None{{/bg.button}}
+        {{#bg.button size="sm" value="duration_sec"}}Duration (seconds){{/bg.button}}
+        {{#bg.button size="sm" value="duration_ms"}}Duration (milliseconds){{/bg.button}}
+        {{#bg.button size="sm" value="size"}}Size{{/bg.button}}
       {{/bs-button-group}}
     </div>
   {{/form.element}}
@@ -30,9 +30,9 @@
         id=el.id
         type="radio"
         onChange=(action (mut el.value)) as |bg|}}
-        {{#bg.button size="sm" value='line'}}Line{{/bg.button}}
-        {{#bg.button size="sm" value='spline'}}Smooth line{{/bg.button}}
-        {{#bg.button size="sm" value='stacked'}}Stacked area{{/bg.button}}
+        {{#bg.button size="sm" value="line"}}Line{{/bg.button}}
+        {{#bg.button size="sm" value="spline"}}Smooth line{{/bg.button}}
+        {{#bg.button size="sm" value="stacked"}}Stacked area{{/bg.button}}
       {{/bs-button-group}}
     </div>
   {{/form.element}}

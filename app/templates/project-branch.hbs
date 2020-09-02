@@ -10,13 +10,13 @@
   {{#each sortedCustomGraphs as |graph|}}
     {{#collapsible-container title=graph.title isCollapsed=true}}
       {{custom-graph project=project branch=branch graph=graph}}
-      {{graph-controls graph=graph jobNames=projectJobNames graphChangedAction=(action 'graphChanged')}}
+      {{graph-controls graph=graph jobNames=projectJobNames graphChangedAction=(action "graphChanged")}}
     {{/collapsible-container}}
   {{/each}}
 
-  {{#collapsible-container title=(if isAddingCustomGraph "New custom graph" "Add custom graph") isCollapsed=isAddFormCollapsed onToggle=(action 'toggleAddCustomGraph')}}
-    {{#custom-graph-form submitLabel='Add' model=newCustomGraph jobNames=projectJobNames submitAction=(action 'addCustomGraph')}}
-      {{#bs-button size="sm" type="secondary" onClick=(action 'cancelAddCustomGraph')}}Cancel{{/bs-button}}
+  {{#collapsible-container title=(if isAddingCustomGraph "New custom graph" "Add custom graph") isCollapsed=isAddFormCollapsed onToggle=(action "toggleAddCustomGraph")}}
+    {{#custom-graph-form submitLabel="Add" model=newCustomGraph jobNames=projectJobNames submitAction=(action "addCustomGraph")}}
+      {{#bs-button size="sm" type="secondary" onClick=(action "cancelAddCustomGraph")}}Cancel{{/bs-button}}
     {{/custom-graph-form}}
   {{/collapsible-container}}
 {{/if}}

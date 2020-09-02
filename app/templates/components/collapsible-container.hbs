@@ -3,8 +3,8 @@
   {{title}}
 </div>
 
-{{#bs-collapse collapsed=isCollapsed}}
+<BsCollapse @collapsed={{isCollapsed}}>
   <div class="collapsible-content">
     {{yield}}
   </div>
-{{/bs-collapse}}
+</BsCollapse>

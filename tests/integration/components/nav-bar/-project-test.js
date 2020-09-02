@@ -14,6 +14,6 @@ module('Integration | Component | nav-bar/-project', function(hooks) {
 
     await render(hbs`{{nav-bar/-project navigation=mockNavigation project=project}}`)
 
-    assert.equal(this.element.textContent.trim(), '')
+    assert.dom(this.element).hasText('')
   })
 })

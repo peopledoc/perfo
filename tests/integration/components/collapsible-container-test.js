@@ -10,11 +10,11 @@ module('Integration | Component | collapsible-container', function(hooks) {
     await render(hbs`{{collapsible-container class="test"}}`)
 
     let component = this.element.querySelector('.test')
-    assert.ok(component.classList.contains('collapsible'))
-    assert.ok(component.classList.contains('collapsed'))
+    assert.dom(component).hasClass('collapsible')
+    assert.dom(component).hasClass('collapsed')
 
     let title = this.element.querySelector('.collapsible-title')
-    assert.equal(title.querySelector('.collapsible-caret').textContent, '►')
+    assert.dom(title.querySelector('.collapsible-caret')).hasText('►')
     assert.equal(title.innerText, '► Collapsible')
   })
 

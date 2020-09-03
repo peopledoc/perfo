@@ -3,7 +3,7 @@
     {{#if isLoadingProjects}}
       Loading project list...
     {{else}}
-      <PowerSelect @selected={{selectedProject}} @options={{sortedProjects}} @onchange={{action "selectProject"}} @placeholder="Select a project..." @searchField="name" as |project|>
+      <PowerSelect @selected={{selectedProject}} @options={{sortedProjects}} @onChange={{action "selectProject"}} @placeholder="Select a project..." @searchField="name" as |project|>
         <NavBar::-Project @project={{project}} />
       </PowerSelect>
     {{/if}}
@@ -11,7 +11,7 @@
 
   <section class="nav-branch">
     {{#if selectedProject}}
-      <PowerSelect @selected={{selectedBranch}} @options={{selectedProject.branches}} @onchange={{action "selectBranch"}} @placeholder="Select a branch..." as |branch|>
+      <PowerSelect @selected={{selectedBranch}} @options={{selectedProject.branches}} @onChange={{action "selectBranch"}} @placeholder="Select a branch..." as |branch|>
         {{branch}}
       </PowerSelect>
     {{/if}}

@@ -13,9 +13,8 @@ module('Integration | Component | collapsible-container', function(hooks) {
     assert.dom(component).hasClass('collapsible')
     assert.dom(component).hasClass('collapsed')
 
-    let title = this.element.querySelector('.collapsible-title')
-    assert.dom(title.querySelector('.collapsible-caret')).hasText('►')
-    assert.equal(title.innerText, '► Collapsible')
+    assert.dom('.collapsible-title .collapsible-caret').hasText('►')
+    assert.dom('.collapsible-title').hasText('► Collapsible')
   })
 
   test('it can have a custom title', async function(assert) {

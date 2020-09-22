@@ -13,6 +13,6 @@ module('Integration | Component | nav-bar/-provider', function(hooks) {
 
     await render(hbs`{{nav-bar/-provider provider=provider}}`)
 
-    assert.equal(this.element.textContent.trim(), 'provider name')
+    assert.dom(this.element).hasText('provider name')
   })
 })

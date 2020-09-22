@@ -10,12 +10,11 @@ module('Integration | Component | collapsible-container', function(hooks) {
     await render(hbs`{{collapsible-container class="test"}}`)
 
     let component = this.element.querySelector('.test')
-    assert.ok(component.classList.contains('collapsible'))
-    assert.ok(component.classList.contains('collapsed'))
+    assert.dom(component).hasClass('collapsible')
+    assert.dom(component).hasClass('collapsed')
 
-    let title = this.element.querySelector('.collapsible-title')
-    assert.equal(title.querySelector('.collapsible-caret').textContent, '►')
-    assert.equal(title.innerText, '► Collapsible')
+    assert.dom('.collapsible-title .collapsible-caret').hasText('►')
+    assert.dom('.collapsible-title').hasText('► Collapsible')
   })
 
   test('it can have a custom title', async function(assert) {

@@ -16,7 +16,9 @@ module('Integration | Component | custom-graph', function(hooks) {
     this.set('graph', { formatter: null })
     this.set('project', { id: 123, name: 'project name' })
     await render(hbs`{{custom-graph graph=graph project=project store=mockStore branch="branch_test"}}`)
-    assert.equal(this.element.textContent.trim(), 'Loading artifact data for project name on branch_test, this may take a little while...')
+    assert.dom(this.element).hasText(
+      'Loading artifact data for project name on branch_test, this may take a little while...'
+    )
   })
 
   test('it renders a graph', async function(assert) {

@@ -2,43 +2,35 @@
   <h4>{{title}}</h4>
 {{/if}}
 
-{{#bs-form formLayout='horizontal' model=model onSubmit=(action 'submit') as |form|}}
-  {{form.element controlType="text" label="Graph title" property="title" required=true}}
-  {{form.element controlType="power-select" label="CI job name" property="jobName" required=true options=jobNames}}
-  {{form.element controlType="text" label="Artifact path" property="artifactMatches" required=true helpText="Regular expression that matches an artifact with data for the graph.  It must be a JSON array of objects with keys `label` and `value`."}}
-  {{form.element controlType="text" label="Branches" property="branchMatches" helpText="Regular expression that matches branches where this graph is relevant.  Leave empty to match all branches."}}
+<BsForm @formLayout="horizontal" @model={{model}} @onSubmit={{action "submit"}} as |form|>
+  <form.element @controlType="text" @label="Graph title" @property="title" as |el|><el.control required={{true}} /></form.element>
+  <form.element @controlType="power-select" @label="CI job name" @property="jobName" @options={{jobNames}} as |el|><el.control required={{true}} /></form.element>
+  <form.element @controlType="text" @label="Artifact path" @property="artifactMatches" @helpText="Regular expression that matches an artifact with data for the graph.  It must be a JSON array of objects with keys `label` and `value`." as |el|><el.control required={{true}} /></form.element>
+  <form.element @controlType="text" @label="Branches" @property="branchMatches" @helpText="Regular expression that matches branches where this graph is relevant.  Leave empty to match all branches." />
 
-  {{#form.element label="Value formatter" property="formatter" as |el|}}
+  <form.element @label="Value formatter" @property="formatter" as |el|>
     <div class="input-group">
-      {{#bs-button-group
-        value=el.value
-        id=el.id
-        type="radio"
-        onChange=(action (mut el.value)) as |bg|}}
-        {{#bg.button size="sm" value='none'}}None{{/bg.button}}
-        {{#bg.button size="sm" value='duration_sec'}}Duration (seconds){{/bg.button}}
-        {{#bg.button size="sm" value='duration_ms'}}Duration (milliseconds){{/bg.button}}
-        {{#bg.button size="sm" value='size'}}Size{{/bg.button}}
-      {{/bs-button-group}}
+      <BsButtonGroup @value={{el.value}} @id={{el.id}} @type="radio" @onChange={{action (mut el.value)}} as |bg|>
+        <bg.button @size="sm" @value="none">None</bg.button>
+        <bg.button @size="sm" @value="duration_sec">Duration (seconds)</bg.button>
+        <bg.button @size="sm" @value="duration_ms">Duration (milliseconds)</bg.button>
+        <bg.button @size="sm" @value="size">Size</bg.button>
+      </BsButtonGroup>
     </div>
-  {{/form.element}}
+  </form.element>
 
-  {{#form.element label="Graph type" property="graphType" as |el|}}
+  <form.element @label="Graph type" @property="graphType" as |el|>
     <div class="input-group">
-      {{#bs-button-group
-        value=el.value
-        id=el.id
-        type="radio"
-        onChange=(action (mut el.value)) as |bg|}}
-        {{#bg.button size="sm" value='line'}}Line{{/bg.button}}
-        {{#bg.button size="sm" value='spline'}}Smooth line{{/bg.button}}
-        {{#bg.button size="sm" value='stacked'}}Stacked area{{/bg.button}}
-      {{/bs-button-group}}
+      <BsButtonGroup @value={{el.value}} @id={{el.id}} @type="radio" @onChange={{action (mut el.value)}} as |bg|>
+        <bg.button @size="sm" @value="line">Line</bg.button>
+        <bg.button @size="sm" @value="spline">Smooth line</bg.button>
+        <bg.button @size="sm" @value="stacked">Stacked area</bg.button>
+      </BsButtonGroup>
     </div>
-  {{/form.element}}
+  </form.element>
 
-  {{form.element controlType="checkbox" label="Show graph legend" property="showLegend"}}
+  <form.element @controlType="checkbox" @label="Show graph legend" @property="showLegend" />
 
-  {{bs-button size="sm" defaultText=submitLabel type="primary" buttonType="submit"}}
+  <BsButton @size="sm" @defaultText={{submitLabel}} @type="primary" @buttonType="submit" />
   {{yield}}
-{{/bs-form}}
+</BsForm>

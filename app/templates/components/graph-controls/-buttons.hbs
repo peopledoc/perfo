@@ -1,12 +1,12 @@
 {{#if graph.isDeleting}}
-  {{#bs-button size="sm" type="danger" onClick=(action "deleteCustomGraph" graph)}}Confirm remove{{/bs-button}}
-  {{#bs-button size="sm" type="success" onClick=(action "toggleConfirmRemoveCustomGraph" graph)}}Keep{{/bs-button}}
+  <BsButton @size="sm" @type="danger" @onClick={{action "deleteCustomGraph" graph}}>Confirm remove</BsButton>
+  <BsButton @size="sm" @type="success" @onClick={{action "toggleConfirmRemoveCustomGraph" graph}}>Keep</BsButton>
 {{else}}
-  {{#bs-button size="sm" type="warning" onClick=(action "toggleConfirmRemoveCustomGraph" graph)}}Remove{{/bs-button}}
+  <BsButton @size="sm" @type="warning" @onClick={{action "toggleConfirmRemoveCustomGraph" graph}}>Remove</BsButton>
 {{/if}}
 {{#if (gt graph.order 0)}}
-  {{#bs-button size="sm" type="secondary" onClick=(action "moveCustomGraph" graph "up")}}Move up{{/bs-button}}
+  <BsButton @size="sm" @type="secondary" @onClick={{action "moveCustomGraph" graph "up"}}>Move up</BsButton>
 {{/if}}
 {{#if (lt graph.order maxCustomGraphOrder)}}
-  {{#bs-button size="sm" type="secondary" onClick=(action "moveCustomGraph" graph "down")}}Move down{{/bs-button}}
+  <BsButton @size="sm" @type="secondary" @onClick={{action "moveCustomGraph" graph "down"}}>Move down</BsButton>
 {{/if}}

@@ -1,5 +1,3 @@
-import DS from 'ember-data'
-
-const { JSONSerializer } = DS
+import JSONSerializer from '@ember-data/serializer/json'
 
 export default JSONSerializer.extend({})

@@ -6,21 +6,34 @@ import hbs from 'htmlbars-inline-precompile'
 module('Integration | Component | collapsible-container', function(hooks) {
   setupRenderingTest(hooks)
 
-  test('it renders', async function(assert) {
-    // Set any properties with this.set('myProperty', 'value');
-    // Handle any actions with this.set('myAction', function(val) { ... });
+  test('it renders a default title', async function(assert) {
+    await render(hbs`{{collapsible-container class="test"}}`)
 
-    await render(hbs`{{collapsible-container}}`)
+    let component = this.element.querySelector('.test')
+    assert.dom(component).hasClass('collapsible')
+    assert.dom(component).hasClass('collapsed')
 
-    assert.equal(this.element.textContent.trim(), '')
+    assert.dom('.collapsible-title .collapsible-caret').hasText('►')
+    assert.dom('.collapsible-title').hasText('► Collapsible')
+  })
 
-    // Template block usage:
+  test('it can have a custom title', async function(assert) {
+    await render(hbs`{{collapsible-container class="test" title="My title"}}`)
+
+    let title = this.element.querySelector('.collapsible-title')
+    assert.equal(title.innerText, '► My title')
+  })
+
+  test('it yields to a collapsible content', async function(assert) {
     await render(hbs`
-      {{#collapsible-container}}
-        template block text
+      {{#collapsible-container class="test"}}
+      CONTENT
       {{/collapsible-container}}
     `)
 
-    assert.equal(this.element.textContent.trim(), 'template block text')
+    let title = this.element.querySelector('.collapsible-content')
+    assert.equal(title.innerText.trim(), 'CONTENT')
   })
+
+  // TODO TBC...
 })

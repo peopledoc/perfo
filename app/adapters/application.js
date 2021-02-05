@@ -1,9 +1,8 @@
-import DS from 'ember-data'
+import JSONAPIAdapter from '@ember-data/adapter/json-api'
 import env from 'perfo/config/environment'
 import { computed } from '@ember/object'
 
 const { rootURL } = env
-const { JSONAPIAdapter } = DS
 
 export default JSONAPIAdapter.extend({
   namespace: `${rootURL}${rootURL.endsWith('/') ? '' : '/'}api`,

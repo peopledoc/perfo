@@ -3,36 +3,23 @@
     {{#if isLoadingProjects}}
       Loading project list...
     {{else}}
-      {{#power-select
-        selected=selectedProject
-        options=sortedProjects
-        onchange=(action 'selectProject')
-        placeholder="Select a project..."
-        searchField='name'
-        as |project|
-      }}
-        {{nav-bar/-project project=project}}
-      {{/power-select}}
+      <PowerSelect @selected={{selectedProject}} @options={{sortedProjects}} @onChange={{action "selectProject"}} @placeholder="Select a project..." @searchField="name" as |project|>
+        <NavBar::-Project @project={{project}} />
+      </PowerSelect>
     {{/if}}
   </section>
 
   <section class="nav-branch">
     {{#if selectedProject}}
-      {{#power-select
-        selected=selectedBranch
-        options=selectedProject.branches
-        onchange=(action 'selectBranch')
-        placeholder="Select a branch..."
-        as |branch|
-      }}
+      <PowerSelect @selected={{selectedBranch}} @options={{selectedProject.branches}} @onChange={{action "selectBranch"}} @placeholder="Select a branch..." as |branch|>
         {{branch}}
-      {{/power-select}}
+      </PowerSelect>
     {{/if}}
   </section>
 
   <section class="nav-providers">
     {{#each providers as |provider|}}
-      {{nav-bar/-provider provider=provider}}
+      <NavBar::-Provider @provider={{provider}} />
     {{/each}}
   </section>
 </nav>

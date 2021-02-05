@@ -1,5 +1,5 @@
-{{#nav-bar navigationAction=(route-action 'navigationChanged')}}
+<NavBar @navigationAction={{action "navigationChanged"}}>
   <section class="main">
     {{outlet}}
   </section>
-{{/nav-bar}}
+</NavBar>

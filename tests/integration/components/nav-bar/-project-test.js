@@ -7,20 +7,13 @@ module('Integration | Component | nav-bar/-project', function(hooks) {
   setupRenderingTest(hooks)
 
   test('it renders', async function(assert) {
-    // Set any properties with this.set('myProperty', 'value');
-    // Handle any actions with this.set('myAction', function(val) { ... });
+    this.set('project', { provider: 123 })
+    this.set('mockNavigation', {
+      providers: [{ id: 123, name: 'my provider', icon: 'wow.ico' }]
+    })
 
-    await render(hbs`{{nav-bar/-project}}`)
+    await render(hbs`{{nav-bar/-project navigation=mockNavigation project=project}}`)
 
-    assert.equal(this.element.textContent.trim(), '')
-
-    // Template block usage:
-    await render(hbs`
-      {{#nav-bar/-project}}
-        template block text
-      {{/nav-bar/-project}}
-    `)
-
-    assert.equal(this.element.textContent.trim(), 'template block text')
+    assert.dom(this.element).hasText('')
   })
 })

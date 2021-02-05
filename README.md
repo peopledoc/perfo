@@ -240,3 +240,7 @@ Has the following methods:
 
 [cciapi]: https://circleci.com/account/api
 [morgan]: https://github.com/expressjs/morgan
+
+## License
+
+This project is licensed under the [MIT License](LICENSE.md).

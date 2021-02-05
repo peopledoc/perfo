@@ -196,7 +196,7 @@ module.exports = function(injections) {
       }
 
       return {
-        account: user.name,
+        account: user.name || user.login || user.selected_email,
         connected,
         icon: CIRCLECI_ICON,
         name: 'CircleCI'

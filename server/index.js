@@ -15,7 +15,9 @@ module.exports = function(app) {
 
   app.use(morgan(logFormat))
   app.use(compression())
-  app.use(bodyParser.json())
+  app.use(bodyParser.json({
+    type: ['application/json', 'application/vnd.api+json']
+  }))
 
   routes.providers(injections, app, `${rootURL}api/providers`)
   routes.projects(injections, app, `${rootURL}api/projects`)

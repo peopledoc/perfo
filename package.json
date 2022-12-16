@@ -68,7 +68,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "require-directory": "^2.1.1"
   }
 }
